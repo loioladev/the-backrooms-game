@@ -9,7 +9,7 @@ Deus o salve se você ouvir algo vagando por perto, pois com toda certeza ele ou
 ## Narrativa
 ***
 
-Um adolescente foi *noclippado* da realidade e acabou parando no nível 0 das Backrooms. Perdido, ele deverá explorar os níveis e enfrentar os desafios que cada um proporciona, para que encontre a saída para os Frontrooms, a realidade original dele, também conhecida como planeta Terra.
+Um adolescente foi *noclippado* da realidade e acabou parando no nível 0 das Backrooms, o Lobby. Perdido, ele deverá explorar os níveis e enfrentar os desafios que cada um proporciona, para que encontre a saída para os Frontrooms, a sua realidade original, também conhecida como planeta Terra.
 
 ## Gênero
 ***
@@ -34,7 +34,7 @@ O jogo terá uma visão top-down, ou seja, a câmera estará acima do jogador em
   - *"(relatório contendo parte da história)"*
 
 ### Nível 1 - A garagem
-* **Ambiente**: As salas encontradas nesse nível são parte uma garagem gigante. Parte dessas garagens possuem caminhos fechados que contém quadros e pinturas antigas. A energia é cortada de tempos em tempos e, durante esses apagões, entidades estarão liberadas para caçar os jogadores, que possuirão apenas uma lanterna e devem fugir delas.
+* **Ambiente**: As salas encontradas nesse nível são parte uma garagem gigante. Parte dessas garagens possuem caminhos fechados que contém quadros e pinturas antigas. A energia é cortada de tempos em tempos e, durante esses apagões, entidades estarão liberadas para caçar os jogadores, que devem possuir apenas uma lanterna e devem fugir das entidades.
 
 * **Saída**: A saída desse nível é *noclippando* da realidade para outro nível, e isso deverá ocorrer depois que o jogador solucionar o enigma presente nos quadros.
 
