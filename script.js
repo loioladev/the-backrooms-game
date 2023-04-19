@@ -16,9 +16,8 @@ class Frontrooms extends Phaser.Scene {
 const config = {
     type: Phaser.AUTO,
     width: 800,
-    height: 600,
+    height: 800,
     backgroundColor: '#ffffff',
-    parent: 'game-container',
     pixelArt: true,
     scene: Frontrooms
 };
