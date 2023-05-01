@@ -7,8 +7,8 @@ export default class LevelZero extends Phaser.Scene {
 
     preload() {
         this.load.image('tiles', 'assets/tilemaps/level0_template.png');
-        this.load.tilemapTiledJSON('map', 'level0_tiled/tilemap_collision.json');
-        this.load.image('player', 'assets/player.png');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level0_template.json');
+        this.load.image('player', 'assets/sprites/player.png');
     }
 
     create() {
@@ -24,6 +24,7 @@ export default class LevelZero extends Phaser.Scene {
         worldLayer.setCollisionByProperty({ collider: true });
         decorationLayer.setCollisionByProperty({ collider: true });
         aboveLayer.setDepth(10);
+        above1Layer.setDepth(10);
 
         // Create the player with physics
         const spawnPoint = map.findObject("Object", obj => obj.name === "Spawnpoint");
