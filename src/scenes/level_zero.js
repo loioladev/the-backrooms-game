@@ -1,14 +1,13 @@
+import Player from '../entities/player.js';
 export default class LevelZero extends Phaser.Scene {
     constructor() {
         super('LevelZero')
-        this.cursors = null;
-        this.player = null;
     }
 
     preload() {
         this.load.image('tiles', 'assets/tilemaps/level0_template.png');
         this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level0_template.json');
-        this.load.image('player', 'assets/sprites/player.png');
+        this.load.spritesheet('player', 'assets/sprites/player.png', {frameWidth: 16, frameHeight: 16});
     }
 
     create() {
@@ -28,7 +27,7 @@ export default class LevelZero extends Phaser.Scene {
 
         // Create the player with physics
         const spawnPoint = map.findObject("Object", obj => obj.name === "Spawnpoint");
-        this.player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'player');
+        this.player = new Player(this, spawnPoint.x, spawnPoint.y);
 
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, decorationLayer);
@@ -42,23 +41,6 @@ export default class LevelZero extends Phaser.Scene {
 
     update() {
         const speed = 80; // pixels per second
-
-        // Move the player left or right when the corresponding arrow key is pressed
-        if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-speed);
-        } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(speed);
-        } else {
-            this.player.setVelocityX(0);
-        }
-
-        // Move the player up or down when the corresponding arrow key is pressed
-        if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-speed);
-        } else if (this.cursors.down.isDown) {
-            this.player.setVelocityY(speed);
-        } else {
-            this.player.setVelocityY(0);
-        }
+        this.player.update(this.cursors, speed);
     }
 }
