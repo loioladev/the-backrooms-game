@@ -1,8 +1,8 @@
-import LevelZero from './src/level_zero.js';
+import LevelZero from './src/scenes/level_zero.js';
 
 const config = {
     type: Phaser.AUTO,
-    width: 400,
+    width: 300,
     height: 300,
     parent: "game-container",
     backgroundColor: '#ffffff',
