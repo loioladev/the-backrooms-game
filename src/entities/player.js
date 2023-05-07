@@ -1,6 +1,6 @@
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y) {
-        super(scene, x, y, 'player');
+    constructor(scene, x, y, texture) {
+        super(scene, x, y, texture);
 
         // Add player sprite to scene
         scene.add.existing(this);
@@ -12,41 +12,41 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         const frameRateAnims = 6;
         scene.anims.create({
             key: 'idle',
-            frames: [{ key: 'player', frame: 0 }],
+            frames: [{ key: texture, frame: 0 }],
             frameRate: frameRateAnims,
         });
 
         scene.anims.create({
             key: 'run-down',
-            frames: scene.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
+            frames: scene.anims.generateFrameNumbers(texture, { start: 0, end: 3 }),
             frameRate: frameRateAnims,
             repeat: -1,
         });
 
         scene.anims.create({
             key: 'run-horizontal',
-            frames: scene.anims.generateFrameNumbers('player', { start: 4, end: 7 }),
+            frames: scene.anims.generateFrameNumbers(texture, { start: 4, end: 7 }),
             frameRate: frameRateAnims,
             repeat: -1,
         });
 
         scene.anims.create({
             key: 'run-top',
-            frames: scene.anims.generateFrameNumbers('player', { start: 8, end: 11 }),
+            frames: scene.anims.generateFrameNumbers(texture, { start: 8, end: 11 }),
             frameRate: frameRateAnims,
             repeat: -1,
         });
 
         scene.anims.create({
             key: 'run-diagonal-top',
-            frames: scene.anims.generateFrameNumbers('player', { start: 12, end: 15 }),
+            frames: scene.anims.generateFrameNumbers(texture, { start: 12, end: 15 }),
             frameRate: frameRateAnims,
             repeat: -1,
         });
 
         scene.anims.create({
             key: 'run-diagonal-bottom',
-            frames: scene.anims.generateFrameNumbers('player', { start: 16, end: 19 }),
+            frames: scene.anims.generateFrameNumbers(texture, { start: 16, end: 19 }),
             frameRate: frameRateAnims,
             repeat: -1,
         });
