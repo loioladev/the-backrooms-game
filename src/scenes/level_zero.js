@@ -15,6 +15,7 @@ export default class LevelZero extends Phaser.Scene {
         this.load.spritesheet('partygoer', 'assets/sprites/partygoer.png', {frameWidth: 32, frameHeight: 32});
         this.load.spritesheet('meatball', 'assets/sprites/meatball.png', {frameWidth: 16, frameHeight: 16})
         this.load.spritesheet('smile', 'assets/sprites/smile.png', {frameWidth: 16, frameHeight: 16})
+        this.load.image('vision', 'assets/mask.png')
     }
 
     create() {
@@ -42,6 +43,38 @@ export default class LevelZero extends Phaser.Scene {
         this.monster5 = new Monster(this, spawnPoint.x - 32, spawnPoint.y, 'meatball', 'meatball')
         this.monster6 = new Monster(this, spawnPoint.x, spawnPoint.y + 64, 'smile', 'smile')
 
+        const width = this.scale.width * 2
+        const height = this.scale.height * 2
+
+        // make a RenderTexture that is the size of the screen
+        this.rt = this.make.renderTexture({
+            width,
+            height
+        }, true)
+
+        // fill it with black
+        this.rt.fill(0x000000, 0.95)
+
+        // draw the floorLayer into it
+        this.rt.draw(belowLayer)
+
+        // set a dark blue tint
+        this.rt.setTint(0x0a2948);
+        this.rt.setDepth(100)
+
+        this.vision = this.make.image({
+            x: this.player.x,
+            y: this.player.y,
+            key: 'vision',
+            add: false
+        })
+        this.vision.scale = 0.3
+        this.vision.setPosition(this.player.x, this.player.y)
+    
+        this.rt.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
+        this.rt.mask.invertAlpha = true
+        // this.rt.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
+
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, decorationLayer);
 
@@ -55,5 +88,10 @@ export default class LevelZero extends Phaser.Scene {
     update() {
         const speed = 80; // pixels per second
         this.player.update(this.cursors, speed);
+
+        this.rt.x = this.player.x;
+        this.rt.y = this.player.y;
+        this.vision.x = this.player.x;
+        this.vision.y = this.player.y;
     }
 }
