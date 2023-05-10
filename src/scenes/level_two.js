@@ -5,15 +5,15 @@ export default class LevelTwo extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('player', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
-        this.load.image('tiles', 'assets/tilemaps/level2_tileset.png');
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level2.json');
+        this.load.spritesheet('player-level-two', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.image('tiles-level-two', 'assets/tilemaps/level2_tileset.png');
+        this.load.tilemapTiledJSON('map-level-two', 'assets/tilemaps_json/level2.json');
         this.load.image('vision', 'assets/mask.png')
     }
 
     create() {
-        const map = this.make.tilemap({ key: 'map' });
-        const tileset = map.addTilesetImage('level2_tileset', 'tiles');
+        const map = this.make.tilemap({ key: 'map-level-two' });
+        const tileset = map.addTilesetImage('level2_tileset', 'tiles-level-two');
 
         // Create layers and set collision
         const belowLayer = map.createLayer('Below', tileset, 0, 0);
@@ -37,7 +37,7 @@ export default class LevelTwo extends Phaser.Scene {
 
         // Create sprites for map
         const spawnPoint = map.findObject("Spawnpoint", obj => obj.name === "player");
-        this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player');
+        this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player-level-two');
         //this.player.setSize(14, 15, true);
         this.player.setDepth(4);
 
@@ -54,6 +54,10 @@ export default class LevelTwo extends Phaser.Scene {
 
         // Add player movement
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.input.keyboard.on('keydown-SPACE', () => {
+            this.scene.start('LastLevel');
+        });
     }
 
     update() {

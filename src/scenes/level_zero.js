@@ -6,9 +6,9 @@ export default class LevelZero extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('tiles', 'assets/tilemaps/level0_template.png');
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level0_template.json');
-        this.load.spritesheet('player', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.image('tiles-level-zero', 'assets/tilemaps/level0_template.png');
+        this.load.tilemapTiledJSON('map-level-zero', 'assets/tilemaps_json/level0_template.json');
+        this.load.spritesheet('player-level-zero', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('devour', 'assets/sprites/devour.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('lantern', 'assets/sprites/lantern.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('walker', 'assets/sprites/walker.png', { frameWidth: 16, frameHeight: 16 });
@@ -19,8 +19,8 @@ export default class LevelZero extends Phaser.Scene {
     }
 
     create() {
-        const map = this.make.tilemap({ key: 'map' });
-        const tileset = map.addTilesetImage('level0_template', 'tiles');
+        const map = this.make.tilemap({ key: 'map-level-zero' });
+        const tileset = map.addTilesetImage('level0_template', 'tiles-level-zero');
 
         // Create layers and set collision
         const belowLayer = map.createLayer('Below', tileset, 0, 0);
@@ -35,8 +35,7 @@ export default class LevelZero extends Phaser.Scene {
 
         // Create sprites for map
         const spawnPoint = map.findObject("Object", obj => obj.name === "Spawnpoint");
-        this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player');
-        this.player.setSize(14, 15, true);
+        this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player-level-zero');
         this.monster1 = new Monster(this, spawnPoint.x, spawnPoint.y, 'lantern', 'lantern');
         this.monster2 = new Monster(this, spawnPoint.x + 32, spawnPoint.y + 32, 'devour', 'devour');
         this.monster3 = new Monster(this, spawnPoint.x, spawnPoint.y + 32, 'walker', 'walker')
@@ -57,6 +56,11 @@ export default class LevelZero extends Phaser.Scene {
 
         // Add player movement
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        // Change scene
+        this.input.keyboard.on('keydown-SPACE', () => {
+            this.scene.start('LevelOne');
+        });
     }
 
     update() {

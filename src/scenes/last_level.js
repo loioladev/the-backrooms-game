@@ -7,14 +7,14 @@ export default class LastLevel extends Phaser.Scene{
     }
 
     preload(){
-        this.load.image('tiles', 'assets/tilemaps/level_last_template.png');
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level_last_template.json');
-        this.load.spritesheet('player', 'assets/sprites/player.png', {frameWidth: 16, frameHeight: 16});
+        this.load.image('tiles-level-last', 'assets/tilemaps/level_last_template.png');
+        this.load.tilemapTiledJSON('map-level-last', 'assets/tilemaps_json/level_last_template.json');
+        this.load.spritesheet('player-level-last', 'assets/sprites/player.png', {frameWidth: 16, frameHeight: 16});
     }
 
     create(){
-        const map = this.make.tilemap({key: 'map'})
-        const tileset = map.addTilesetImage('last_map', 'tiles')
+        const map = this.make.tilemap({key: 'map-level-last'})
+        const tileset = map.addTilesetImage('last_map', 'tiles-level-last')
 
         const worldLayer = map.createLayer('World', tileset, 0, 0)
         const belowLayer = map.createLayer('Below', tileset, 0, 0);
@@ -30,7 +30,7 @@ export default class LastLevel extends Phaser.Scene{
 
         // Create the player with physics
         const spawnPoint = map.findObject("object", obj => obj.name === "object");
-        this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player');
+        this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player-level-last');
 
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, decorationLayer);
@@ -41,6 +41,10 @@ export default class LastLevel extends Phaser.Scene{
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.input.keyboard.on('keydown-SPACE', () => {
+            this.scene.start('LevelZero');
+        });
     }
 
     update(){
