@@ -45,7 +45,8 @@ Além disso, ao longo do mapa vão existir outros relatórios que contarão mais
 
 * **Saída**: A saída desse nível é *noclippando* da realidade para outro nível, e isso deverá ocorrer depois que o jogador solucionar o enigma presente nos quadros.
 
-* **Enigma dos quadros**: *inserir enigma aqui*
+* **Enigma dos quadros**: Na garagem, o jogador encontrará uma série de quadros pendurados nas paredes do corredor.
+Um outro corredor possui cinco interruptores numerados de 1 a 5. Cada quadro possui um elemento especial ou peculiar que pode ser relevante para desvendar a ordem correta para ativar os interruptores. Então o jogador terá que examinar cada quadro para descobrir a ordem dos interruptores. Ao acertar a ordem, uma sala secreta irá ser aberta, e nela terá uma chave, que o jogador vai utilizar no carro bege para ativar o *noclip*.
 
 * Referência: https://backrooms.fandom.com/wiki/Level_1
 
