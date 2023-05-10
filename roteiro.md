@@ -76,3 +76,11 @@ Um outro corredor possui cinco interruptores numerados de 1 a 5. Cada quadro pos
 2. Planejamento inicial do laboratório do nível 0
 ![](./assets/roteiro/storyboard_2.png "image2")
 
+3. Planejamento inicial da garagem do nível 1
+![](./assets/roteiro/level1_image1.png "image3")
+
+4. Planejamento inicial do corredor com quadros do nível 1
+![](./assets/roteiro/level1_image2.png "image4")
+
+Planejamento inicial da sala de carros do nível 1
+![](./assets/roteiro/level1_image3.png "image5")
