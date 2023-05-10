@@ -136,4 +136,34 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.idleFlip = false;
         }
     }
+
+    createFogOfWar(scene, texture_mask, scale=0.3, fill=0.9) {
+        // Make fog of war effect
+        const width = scene.scale.width * 2;
+        const height = scene.scale.height * 2;
+        
+        this.rt = scene.make.renderTexture({
+            width,
+            height
+        }, true)
+        this.rt.fill(0x000000, fill)
+        this.rt.setDepth(100)
+        this.vision = scene.make.image({
+            x: this.x,
+            y: this.y,
+            key: texture_mask,
+            add: false
+        })
+        this.vision.scale = scale
+        this.vision.setPosition(this.x, this.y)
+        this.rt.mask = new Phaser.Display.Masks.BitmapMask(scene, this.vision)
+        this.rt.mask.invertAlpha = true
+    }
+
+    updateFogOfWar() {
+        this.rt.x = this.x;
+        this.rt.y = this.y;
+        this.vision.x = this.x;
+        this.vision.y = this.y;
+    }
 }

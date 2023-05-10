@@ -45,24 +45,7 @@ export default class LevelZero extends Phaser.Scene {
         this.monster6 = new Monster(this, spawnPoint.x, spawnPoint.y + 64, 'smile', 'smile')
 
         // Make fog of war effect
-        const width = this.scale.width * 2
-        const height = this.scale.height * 2
-        this.rt = this.make.renderTexture({
-            width,
-            height
-        }, true)
-        this.rt.fill(0x000000, 0.9)
-        this.rt.setDepth(100)
-        this.vision = this.make.image({
-            x: this.player.x,
-            y: this.player.y,
-            key: 'vision',
-            add: false
-        })
-        this.vision.scale = 0.3
-        this.vision.setPosition(this.player.x, this.player.y)
-        this.rt.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
-        this.rt.mask.invertAlpha = true
+        this.player.createFogOfWar(this, 'vision')
 
         // Add player physics
         this.physics.add.collider(this.player, worldLayer);
@@ -82,9 +65,6 @@ export default class LevelZero extends Phaser.Scene {
         this.player.update(this.cursors, speed);
 
         // Update fog of war effect
-        this.rt.x = this.player.x;
-        this.rt.y = this.player.y;
-        this.vision.x = this.player.x;
-        this.vision.y = this.player.y;
+        this.player.updateFogOfWar()
     }
 }
