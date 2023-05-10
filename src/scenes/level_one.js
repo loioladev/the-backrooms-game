@@ -5,14 +5,14 @@ export default class LevelOne extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('tiles', 'assets/tilemaps/level1_v2.png');
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level1_v2.json');
-        this.load.spritesheet('player', 'assets/sprites/player.png', {frameWidth: 16, frameHeight: 16});
+        this.load.image('tiles-level-one', 'assets/tilemaps/level1_v2.png');
+        this.load.tilemapTiledJSON('map-level-one', 'assets/tilemaps_json/level1_v2.json');
+        this.load.spritesheet('player-level-one', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
     }
 
     create() {
-        const map = this.make.tilemap({ key: 'map' });
-        const tileset = map.addTilesetImage('level1-v2', 'tiles');
+        const map = this.make.tilemap({ key: 'map-level-one' });
+        const tileset = map.addTilesetImage('level1-v2', 'tiles-level-one');
 
         const worldLayer = map.createLayer('World', tileset, 0, 0);
         const wallLayer = map.createLayer('Wall', tileset, 0, 0);
@@ -27,7 +27,7 @@ export default class LevelOne extends Phaser.Scene {
 
         // Create the player with physics
         const spawnPoint = map.findObject("player", obj => obj.name === "spawn point");
-        this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player');
+        this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player-level-one');
 
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, decorationLayer);
@@ -38,6 +38,10 @@ export default class LevelOne extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.input.keyboard.on('keydown-SPACE', () => {
+            this.scene.start('LevelTwo');
+        });
     }
 
     update() {

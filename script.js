@@ -1,4 +1,7 @@
 import LevelZero from './src/scenes/level_zero.js';
+import LevelOne from './src/scenes/level_one.js';
+import LevelTwo from './src/scenes/level_two.js';
+import LastLevel from './src/scenes/last_level.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -14,7 +17,7 @@ const config = {
             gravity: { y: 0 } // Top down game, so no gravity
         }
     },
-    scene: LevelZero
+    scene: [LevelZero, LevelOne, LevelTwo, LastLevel]
 };
 
 const game = new Phaser.Game(config);

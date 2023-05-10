@@ -64,9 +64,6 @@ Um outro corredor possui cinco interruptores numerados de 1 a 5. Cada quadro pos
 
 * Referência: https://youtu.be/C1mythLI55M
 
-### Nível THE END - O fim
-* **Ambiente**: Ambiente igual ao das Frontrooms. Será mesmo o fim?
-
 
 ## Storyboard
 
