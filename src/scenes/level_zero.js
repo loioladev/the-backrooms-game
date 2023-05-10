@@ -36,6 +36,7 @@ export default class LevelZero extends Phaser.Scene {
         // Create sprites for map
         const spawnPoint = map.findObject("Object", obj => obj.name === "Spawnpoint");
         this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player');
+        this.player.setSize(14, 15, true);
         this.monster1 = new Monster(this, spawnPoint.x, spawnPoint.y, 'lantern', 'lantern');
         this.monster2 = new Monster(this, spawnPoint.x + 32, spawnPoint.y + 32, 'devour', 'devour');
         this.monster3 = new Monster(this, spawnPoint.x, spawnPoint.y + 32, 'walker', 'walker')
