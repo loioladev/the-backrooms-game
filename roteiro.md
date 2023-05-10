@@ -36,6 +36,8 @@ O jogo terá uma visão top-down, ou seja, a câmera estará acima do jogador em
 
   Por favor, Bob e Steve, se vocês sobreviverem e acharem minha carta, digam à minha familia que... (sangue no resto do papel)"
 
+Além disso, ao longo do mapa vão existir outros relatórios que contarão mais sobre a história do jogo.
+
 * Referência: https://backrooms.fandom.com/wiki/Level_0 
 
 ### Nível 1 - A garagem
