@@ -94,3 +94,8 @@ Um outro corredor possui cinco interruptores numerados de 1 a 5. Cada quadro pos
 8. Planejamento da parte final do nível THE END
 ![](./assets/roteiro/storyboard_lastmap3.png "image5")
 
+9. Planejamento inicial de uma sala do nível 2
+![](./assets/roteiro/storyboard_level2_1.png "image3")
+
+10. Planejamento inicial de uma sala do nível 2
+![](./assets/roteiro/storyboard_level2_2.png "image4")
