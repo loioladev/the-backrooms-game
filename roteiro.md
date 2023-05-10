@@ -75,3 +75,8 @@ Além disso, ao longo do mapa vão existir outros relatórios que contarão mais
 2. Planejamento inicial do laboratório do nível 0
 ![](./assets/roteiro/storyboard_2.png "image2")
 
+3. Planejamento inicial de uma sala do nível 2
+![](./assets/roteiro/storyboard_level2_1.png "image3")
+
+4. Planejamento inicial de uma sala do nível 2
+![](./assets/roteiro/storyboard_level2_2.png "image4")
