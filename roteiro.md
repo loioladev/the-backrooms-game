@@ -84,3 +84,13 @@ Um outro corredor possui cinco interruptores numerados de 1 a 5. Cada quadro pos
 
 5. Planejamento inicial do corredor com quadros do nível 1
 ![](./assets/roteiro/level1_image3.png "image5")
+
+6. Planejamento inicial do hospital do nível THE END
+![](./assets/roteiro/storyboard_lastmap1.png "image3")
+
+7. Planejamento da parte intermediária do nível THE END
+![](./assets/roteiro/storyboard_lastmap2.png "image4")
+
+8. Planejamento da parte final do nível THE END
+![](./assets/roteiro/storyboard_lastmap3.png "image5")
+
