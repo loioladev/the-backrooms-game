@@ -6,8 +6,8 @@ export default class LevelZero extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('tiles', 'assets/tilemaps/level0_template.png');
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level0_template.json');
+        this.load.image('tiles', 'assets/tilemaps/level_last_template.png');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level_last_template.json');
         this.load.spritesheet('player', 'assets/sprites/player.png', {frameWidth: 16, frameHeight: 16});
         this.load.spritesheet('devour', 'assets/sprites/devour.png', {frameWidth: 32, frameHeight: 32});
         this.load.spritesheet('lantern', 'assets/sprites/lantern.png', {frameWidth: 32, frameHeight: 32});

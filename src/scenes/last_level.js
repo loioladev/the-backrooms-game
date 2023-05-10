@@ -16,16 +16,16 @@ export default class LastLevel extends Phaser.Scene{
         const map = this.make.tilemap({key: 'map'})
         const tileset = map.addTilesetImage('last_map', 'tiles')
 
-
+        const worldLayer = map.createLayer('World', tileset, 0, 0)
         const belowLayer = map.createLayer('Below', tileset, 0, 0);
-        const worldLayer = map.createLayer('World', tileset, 0, 0);
         const decorationLayer = map.createLayer('Decoration', tileset, 0, 0);
         // const aboveLayer = map.createLayer('Above', tileset, 0, 0);
         // const above1Layer = map.createLayer('Above1', tileset, 0, 0);
 
         worldLayer.setCollisionByProperty({ collider: true });
+        belowLayer.setCollisionByProperty({ collider: true });
         decorationLayer.setCollisionByProperty({ collider: true });
-        // aboveLayer.setDepth(10);
+        decorationLayer.setDepth(10);
         // above1Layer.setDepth(10);
 
         // Create the player with physics
@@ -34,6 +34,7 @@ export default class LastLevel extends Phaser.Scene{
 
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, decorationLayer);
+        this.physics.add.collider(this.player, belowLayer)
 
 
         this.cameras.main.startFollow(this.player);

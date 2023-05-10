@@ -73,3 +73,11 @@ O jogo terá uma visão top-down, ou seja, a câmera estará acima do jogador em
 2. Planejamento inicial do laboratório do nível 0
 ![](./assets/roteiro/storyboard_2.png "image2")
 
+3. Planejamento inicial do hospital do nível THE END
+![](./assets/roteiro/storyboard_lastmap1.png "image3")
+
+4. Planejamento da parte intermediária do nível THE END
+![](./assets/roteiro/storyboard_lastmap2.png "image4")
+
+5. Planejamento da parte final do nível THE END
+![](./assets/roteiro/storyboard_lastmap3.png "image5")
