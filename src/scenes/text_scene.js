@@ -47,6 +47,6 @@ export default class TextScene extends Phaser.Scene {
                         break;
                 }
             });
-        }, 10000);
+        }, 6000);
     }
 }
