@@ -19,6 +19,8 @@ export default class LevelZero extends Phaser.Scene {
     }
 
     create() {
+        this.cameras.main.setBackgroundColor('#000000'); 
+        this.cameras.main.fadeIn(2000);
         const map = this.make.tilemap({ key: 'map-level-zero' });
         const tileset = map.addTilesetImage('level0_template', 'tiles-level-zero');
 
