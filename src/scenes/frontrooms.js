@@ -17,11 +17,16 @@ export default class Frontrooms extends Phaser.Scene {
         const map = this.make.tilemap({ key: 'map-frontrooms' });
         const tileset = map.addTilesetImage('frontrooms', 'tiles-frontrooms');
 
-        map.createLayer('floor', tileset, 0, 0);
-        map.createLayer('buildings', tileset, 0, 0);
-        map.createLayer('decoration', tileset, 0, 0);
+        const floorLayer = map.createLayer('floor', tileset, -8, 0);
+        const buildingsLayer = map.createLayer('buildings', tileset, -8, 0);
+        const decorationLayer = map.createLayer('decoration', tileset, -8, 0);
+        buildingsLayer.setCollisionByProperty({ collider: true });
+        decorationLayer.setCollisionByProperty({ collider: true });
 
         this.player = new Player(this, 155, 270, 'player-frontrooms');
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.physics.add.collider(this.player, buildingsLayer);
+        this.physics.add.collider(this.player, decorationLayer);
 
         this.scene.add('TextScene', TextScene, false)
         const startButton = this.add.text(100, 100, 'Começar Jogo', { fontSize: '16px', fill: '#000000' })
@@ -39,5 +44,10 @@ export default class Frontrooms extends Phaser.Scene {
                     }
                 });
             });
+    }
+    update() {
+        const speed = 60; // pixels per second
+        this.player.update(this.cursors, speed);
+        
     }
 }

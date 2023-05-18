@@ -46,11 +46,6 @@ export default class LevelZero extends Phaser.Scene {
 
         // Add player movement
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        // Change scene
-        this.input.keyboard.on('keydown-SPACE', () => {
-            this.scene.start('LevelOne');
-        });
     }
 
     update() {
