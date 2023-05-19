@@ -9,16 +9,12 @@ export default class LevelZero extends Phaser.Scene {
         this.load.image('tiles-level-zero', 'assets/tilemaps/level0_template.png');
         this.load.tilemapTiledJSON('map-level-zero', 'assets/tilemaps_json/level0_template.json');
         this.load.spritesheet('player-level-zero', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
-        this.load.spritesheet('devour', 'assets/sprites/devour.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('lantern', 'assets/sprites/lantern.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('walker', 'assets/sprites/walker.png', { frameWidth: 16, frameHeight: 16 });
-        this.load.spritesheet('partygoer', 'assets/sprites/partygoer.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('meatball', 'assets/sprites/meatball.png', { frameWidth: 16, frameHeight: 16 })
-        this.load.spritesheet('smile', 'assets/sprites/smile.png', { frameWidth: 16, frameHeight: 16 })
         this.load.image('vision', 'assets/mask.png')
     }
 
     create() {
+        this.cameras.main.setBackgroundColor('#000000'); 
+        this.cameras.main.fadeIn(2000);
         const map = this.make.tilemap({ key: 'map-level-zero' });
         const tileset = map.addTilesetImage('level0_template', 'tiles-level-zero');
 
@@ -36,13 +32,7 @@ export default class LevelZero extends Phaser.Scene {
         // Create sprites for map
         const spawnPoint = map.findObject("Object", obj => obj.name === "Spawnpoint");
         this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player-level-zero');
-        this.monster1 = new Monster(this, spawnPoint.x, spawnPoint.y, 'lantern', 'lantern');
-        this.monster2 = new Monster(this, spawnPoint.x + 32, spawnPoint.y + 32, 'devour', 'devour');
-        this.monster3 = new Monster(this, spawnPoint.x, spawnPoint.y + 32, 'walker', 'walker')
-        this.monster4 = new Monster(this, spawnPoint.x + 32, spawnPoint.y, 'partygoer', 'partygoer')
-        this.monster5 = new Monster(this, spawnPoint.x - 32, spawnPoint.y, 'meatball', 'meatball')
-        this.monster6 = new Monster(this, spawnPoint.x, spawnPoint.y + 64, 'smile', 'smile')
-
+        
         // Make fog of war effect
         this.player.createFogOfWar(this, 'vision')
 
@@ -56,11 +46,6 @@ export default class LevelZero extends Phaser.Scene {
 
         // Add player movement
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        // Change scene
-        this.input.keyboard.on('keydown-SPACE', () => {
-            this.scene.start('LevelOne');
-        });
     }
 
     update() {
