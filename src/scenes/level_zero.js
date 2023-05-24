@@ -3,12 +3,14 @@ import Monster from '../entities/monster.js';
 export default class LevelZero extends Phaser.Scene {
     constructor() {
         super('LevelZero')
+        this.timeMovement = 0;
     }
 
     preload() {
         this.load.image('tiles-level-zero', 'assets/tilemaps/level0_template.png');
         this.load.tilemapTiledJSON('map-level-zero', 'assets/tilemaps_json/level0_template.json');
         this.load.spritesheet('player-level-zero', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('walker', 'assets/sprites/walker.png', { frameWidth: 16, frameHeight: 16 })
         this.load.image('vision', 'assets/mask.png')
     }
 
@@ -32,7 +34,8 @@ export default class LevelZero extends Phaser.Scene {
         // Create sprites for map
         const spawnPoint = map.findObject("Object", obj => obj.name === "Spawnpoint");
         this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player-level-zero');
-        
+        // Ajustar tamanho do personagem para colisão
+        this.player.body.setSize(10, 14);
         // Make fog of war effect
         this.player.createFogOfWar(this, 'vision')
 
@@ -54,6 +57,8 @@ export default class LevelZero extends Phaser.Scene {
         this.player.update(this.cursors, speed);
 
         // Update fog of war effect
-        this.player.updateFogOfWar()
+        this.player.updateFogOfWar();
+        
+        this.timeMovement++;
     }
 }

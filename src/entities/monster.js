@@ -40,9 +40,37 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.anims.play(monster_type + '-' + huntingAnimation, true);
+
+        this.directionX = 0;
+        this.directionY = 0;
     }
 
     update() {
         this.anims.play(monster_type + '-' + huntingAnimation, true)
+    }
+
+    random_movement(velocity, time){
+        if (time % 60 == 0){
+            this.directionX = Math.floor(Math.random() * 3);
+            this.directionY = Math.floor(Math.random() * 3);
+        }
+
+        if (this.directionY == 0)
+            this.setVelocityY(velocity); // down
+        else if (this.directionY == 1)
+            this.setVelocityY(-velocity); // up
+        else
+            this.setVelocityY(0); // stop
+
+        if (this.directionX == 0){
+            this.setVelocityX(velocity); // right
+            this.flipX = false;
+        }
+        else if (this.directionX == 1){
+            this.setVelocityX(-velocity); // left
+            this.flipX = true;
+        }
+        else
+            this.setVelocityX(0); // stop
     }
 }
