@@ -1,9 +1,15 @@
 import Player from '../entities/player.js';
 import TextScene from './text_scene.js';
+import LevelZero from "./level_zero.js";
+import LevelOne from "./level_one.js";
+import LevelTwo from "./level_two.js";
+import LastLevel from "./last_level.js";
 
 export default class Frontrooms extends Phaser.Scene {
-    constructor() {
-        super('Frontrooms')
+    constructor(){
+        super('Frontrooms');
+        this.player = null;
+        this.cursors = null;
     }
 
     preload() {
@@ -31,6 +37,11 @@ export default class Frontrooms extends Phaser.Scene {
         this.physics.add.collider(this.player, decorationLayer);
 
         this.scene.add('TextScene', TextScene, false)
+        this.scene.add('LevelZero', LevelZero, false)
+        this.scene.add('LevelOne', LevelOne, false)
+        this.scene.add('LevelTwo', LevelTwo, false)
+        this.scene.add('LastLevel', LastLevel, false)
+
         this.add.image(150, 60, 'logo').setDepth(11).setScale(0.3)
         this.add.text(30, 105, 'The Backrooms', { fontSize: '32px', fill: '#000000', fontFamily: 'Lucida Console', stroke: '#000000', strokeThickness: 2 }).setDepth(11)
         const startButton = this.add.text(80, 145, 'Começar Jogo', { fontSize: '18px', fill: '#000000', stroke: '#ffffff', strokeThickness: 2, fontFamily: 'Lucida Console' })
