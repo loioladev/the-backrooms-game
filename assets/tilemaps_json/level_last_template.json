@@ -23,16 +23,27 @@
          "objects":[
                 {
                  "height":0,
-                 "id":70,
+                 "id":83,
                  "name":"object",
                  "point":true,
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":210.727272727273,
-                 "y":87.0909090909091
+                 "x":249.333333333333,
+                 "y":89.3333333333333
                 }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":16,
+         "name":"teste",
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -184,8 +195,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":16,
- "nextobjectid":80,
+ "nextlayerid":17,
+ "nextobjectid":84,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"git",
@@ -13670,7 +13681,7 @@
                         {
                          "name":"collider",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }]
                 }, 
                 {
@@ -13679,7 +13690,7 @@
                         {
                          "name":"collider",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }]
                 }, 
                 {
@@ -14156,7 +14167,7 @@
                         {
                          "name":"collider",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }]
                 }, 
                 {
@@ -14165,7 +14176,7 @@
                         {
                          "name":"collider",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }]
                 }, 
                 {

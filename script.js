@@ -1,5 +1,4 @@
-// import Frontrooms from './src/scenes/frontrooms.js';
-import LastLevel from "./src/scenes/last_level.js";
+import Frontrooms from "./src/scenes/frontrooms.js";
 
 const config = {
     type: Phaser.AUTO,
@@ -15,7 +14,7 @@ const config = {
             gravity: { y: 0 } // Top down game, so no gravity
         }
     },
-    scene: LastLevel
+    scene: Frontrooms
 };
 
 const game = new Phaser.Game(config);
