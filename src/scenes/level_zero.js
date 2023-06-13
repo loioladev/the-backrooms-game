@@ -1,8 +1,6 @@
 import Player from '../entities/player.js';
 import Monster from '../entities/monster.js';
-
-const TILESIZE = 16;
-
+import TextScene from './text_scene.js';
 export default class LevelZero extends Phaser.Scene {
     constructor() {
         super('LevelZero');
@@ -14,45 +12,12 @@ export default class LevelZero extends Phaser.Scene {
         this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level0_template.json');
         this.load.spritesheet('player', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('walker', 'assets/sprites/walker.png', { frameWidth: 16, frameHeight: 16 })
-        this.load.image('vision', 'assets/mask.png');
-
-        this.load.image('note1', 'assets/level0/notas1.png');
-        this.load.image('note2', 'assets/level0/notas2.png');
-        this.load.image('note3', 'assets/level0/notas3.png');
-        this.load.image('note4', 'assets/level0/notafinal.png');
-        this.load.image('card', 'assets/level0/card.png');
+        this.load.image('vision', 'assets/mask.png')
     }
 
     create() {
         this.cameras.main.setBackgroundColor('#000000');
         this.cameras.main.fadeIn(2000);
-
-        this.card = this.add.image(0, 0, 'card');
-        this.hasCard = false;
-
-        this.note1 = this.add.sprite(0, 0, 'note1');
-        this.note2 = this.add.sprite(0, 0, 'note2');
-        this.note3 = this.add.sprite(0, 0, 'note3');
-        this.note4 = this.add.sprite(0, 0, 'note4');
-        this.card.setVisible(false);
-        this.note1.setVisible(false);
-        this.note2.setVisible(false);
-        this.note3.setVisible(false);
-        this.note4.setVisible(false);
-        this.note1.setDepth(101);
-        this.note2.setDepth(101);
-        this.note3.setDepth(101);
-        this.note4.setDepth(101);
-        this.card.setDepth(101);
-
-        this.notesPosition = [
-            { x: 47 * TILESIZE, y: 97 * TILESIZE },
-            { x: 4 * TILESIZE, y: 57 * TILESIZE },
-            { x: 52 * TILESIZE, y: 48 * TILESIZE },
-            { x: 79 * TILESIZE, y: 7 * TILESIZE },
-            { x: 67 * TILESIZE, y: 6 * TILESIZE } // card location
-        ]
-
         const map = this.make.tilemap({ key: 'map' });
         const tileset = map.addTilesetImage('level0_template', 'tiles');
 
@@ -71,7 +36,7 @@ export default class LevelZero extends Phaser.Scene {
         const spawnPoint = map.findObject("Spawnpoints", obj => obj.name === "Player");
         this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player');
         // Ajustar tamanho do personagem para colisão
-        this.player.body.setSize(10, 16);
+        this.player.body.setSize(10, 14);
         // Make fog of war effect
         this.player.createFogOfWar(this, 'vision')
 
@@ -163,21 +128,13 @@ export default class LevelZero extends Phaser.Scene {
 
         // Add player movement
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.input.keyboard.on('keydown-SPACE', () => {
+            this.scene.start('TextScene', { text: 'Descubra o enigma enquanto houver luz.\nNa escuridão, CORRA !', nextScene: 'LevelOne' });
+        });
     }
 
     update() {
-        // verify if player is in the door
-        this.endingDoor()
-        // show notes for player
-        this.showNotes()
-
-        // show card
-        if (this.hasCard) {
-            this.card.setVisible(true);
-            this.card.x = this.cameras.main.scrollX + 40;
-            this.card.y = this.cameras.main.scrollY + 20;
-        }
-
         // Update player movement
         if (this.player.body.enable)
             this.player.update(this.cursors, 80);
@@ -210,59 +167,5 @@ export default class LevelZero extends Phaser.Scene {
         this.cameras.main.once('camerafadeoutcomplete', () => {
             this.scene.start('TextScene', { text: 'Você morreu. Tente novamente.', nextScene: 'LevelZero' });
         });
-    }
-
-    showNotes() {
-        const playerLocation = { x: this.player.x, y: this.player.y };
-        const notesLocation = this.notesPosition;
-        const cameraLocation = { x: this.cameras.main.scrollX + 150, y: this.cameras.main.scrollY + 150};
-        if (Math.abs(playerLocation.x - notesLocation[0].x) <= 32 && Math.abs(playerLocation.y - notesLocation[0].y) <= 32) {
-            this.note1.setVisible(true);
-            this.note1.x = cameraLocation.x
-            this.note1.y = cameraLocation.y
-        }
-        else if (Math.abs(playerLocation.x - notesLocation[1].x) <= 32 && Math.abs(playerLocation.y - notesLocation[1].y) <= 32) {
-            this.note2.setVisible(true);
-            this.note2.x = cameraLocation.x
-            this.note2.y = cameraLocation.y
-        }
-        else if (Math.abs(playerLocation.x - notesLocation[2].x) <= 32 && Math.abs(playerLocation.y - notesLocation[2].y) <= 32) {
-            this.note3.setVisible(true);
-            this.note3.x = cameraLocation.x
-            this.note3.y = cameraLocation.y
-        }
-        else if (Math.abs(playerLocation.x - notesLocation[3].x) <= 32 && Math.abs(playerLocation.y - notesLocation[3].y) <= 32) {
-            this.note4.setVisible(true);
-            this.note4.x = cameraLocation.x
-            this.note4.y = cameraLocation.y
-        }
-        else if (Math.abs(playerLocation.x - notesLocation[4].x) <= 32 && Math.abs(playerLocation.y - notesLocation[4].y) <= 32) {
-            this.hasCard = true;
-        }
-        else {
-            this.note1.setVisible(false);
-            this.note2.setVisible(false);
-            this.note3.setVisible(false);
-            this.note4.setVisible(false);
-        }
-    }
-
-    endingDoor() {
-        const doorLocation = [{ x: 72 * TILESIZE, y: 47 * TILESIZE }, { x: 72 * TILESIZE, y: 48 * TILESIZE },
-        { x: 72 * TILESIZE, y: 49 * TILESIZE }];
-        const playerLocation = { x: this.player.x, y: this.player.y };
-
-        if (!this.hasCard) {
-            return;
-        }
-
-        for (var i = 0; i < doorLocation.length; i++) {
-            if (Math.abs(playerLocation.x - doorLocation[i].x) <= 16 && Math.abs(playerLocation.y - doorLocation[i].y) <= 16) {
-                this.cameras.main.fadeOut(2000);
-                this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('LevelOne');
-                });
-            }
-        }
     }
 }
