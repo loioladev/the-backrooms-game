@@ -76,43 +76,33 @@ export default class LevelZero extends Phaser.Scene {
         this.player.createFogOfWar(this, 'vision')
 
 
-        // Add monsters of the map
+        // Add monsters of the map ------------------
         const spawnPointMonster1 = map.findObject("Spawnpoints", obj => obj.name === "Monster1");
         this.monster1 = new Monster(this, spawnPointMonster1.x, spawnPointMonster1.y, 'walker');
         this.monster1.setSize(10, 16);
-
         const spawnPointMonster2 = map.findObject("Spawnpoints", obj => obj.name === "Monster2");
         this.monster2 = new Monster(this, spawnPointMonster2.x, spawnPointMonster2.y, 'walker');
         this.monster2.setSize(10, 16);
-
         const spawnPointMonster3 = map.findObject("Spawnpoints", obj => obj.name === "Monster3");
         this.monster3 = new Monster(this, spawnPointMonster3.x, spawnPointMonster3.y, 'walker');
         this.monster3.setSize(10, 16);
-
         const spawnPointMonster4 = map.findObject("Spawnpoints", obj => obj.name === "Monster4");
         this.monster4 = new Monster(this, spawnPointMonster4.x, spawnPointMonster4.y, 'walker');
         this.monster4.setSize(10, 16);
-
         const spawnPointMonster5 = map.findObject("Spawnpoints", obj => obj.name === "Monster5");
         this.monster5 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
         this.monster5.setSize(10, 16);
-
         const spawnPointMonster6 = map.findObject("Spawnpoints", obj => obj.name === "Monster6");
         this.monster6 = new Monster(this, spawnPointMonster6.x, spawnPointMonster6.y, 'walker');
         this.monster6.setSize(10, 16);
-
         this.monster7 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
         this.monster7.setSize(10, 16);
-
         this.monster8 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
         this.monster8.setSize(10, 16);
-
         this.monster9 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
         this.monster9.setSize(10, 16);
-
         this.monster10 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
         this.monster10.setSize(10, 16);
-
         this.monster11 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
         this.monster11.setSize(10, 16);
 
@@ -120,42 +110,21 @@ export default class LevelZero extends Phaser.Scene {
         this.physics.add.collider(this.player, worldLayer);
         this.physics.add.collider(this.player, decorationLayer);
 
-        // Add collision between monster and world/decoration
-        this.physics.add.collider(this.monster1, worldLayer);
-        this.physics.add.collider(this.monster1, decorationLayer);
-        this.physics.add.collider(this.monster2, worldLayer);
-        this.physics.add.collider(this.monster2, decorationLayer);
-        this.physics.add.collider(this.monster3, worldLayer);
-        this.physics.add.collider(this.monster3, decorationLayer);
-        this.physics.add.collider(this.monster4, worldLayer);
-        this.physics.add.collider(this.monster4, decorationLayer);
-        this.physics.add.collider(this.monster5, worldLayer);
-        this.physics.add.collider(this.monster5, decorationLayer);
-        this.physics.add.collider(this.monster6, worldLayer);
-        this.physics.add.collider(this.monster6, decorationLayer);
-        this.physics.add.collider(this.monster7, worldLayer);
-        this.physics.add.collider(this.monster7, decorationLayer);
-        this.physics.add.collider(this.monster8, worldLayer);
-        this.physics.add.collider(this.monster8, decorationLayer);
-        this.physics.add.collider(this.monster9, worldLayer);
-        this.physics.add.collider(this.monster9, decorationLayer);
-        this.physics.add.collider(this.monster10, worldLayer);
-        this.physics.add.collider(this.monster10, decorationLayer);
-        this.physics.add.collider(this.monster11, worldLayer);
-        this.physics.add.collider(this.monster11, decorationLayer);
-
-        // Add collision between player and monster
+        let allMonsters = this.physics.add.group();
+        allMonsters.add(this.monster1);
+        allMonsters.add(this.monster2);
+        allMonsters.add(this.monster3);
+        allMonsters.add(this.monster4);
+        allMonsters.add(this.monster5);
+        allMonsters.add(this.monster6);
+        allMonsters.add(this.monster7);
+        allMonsters.add(this.monster8);
+        allMonsters.add(this.monster9);
+        allMonsters.add(this.monster10);
+        allMonsters.add(this.monster11);
+        this.physics.add.collider(allMonsters, worldLayer);
+        this.physics.add.collider(allMonsters, decorationLayer);
         this.physics.add.collider(this.player, this.monster1, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster2, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster3, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster4, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster5, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster6, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster7, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster8, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster9, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster10, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster11, this.handleMonsterCollision, null, this);
 
         // Make camera follow player
         this.cameras.main.startFollow(this.player);
