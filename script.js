@@ -1,4 +1,4 @@
-import Frontrooms from './src/scenes/frontrooms.js';
+import Frontrooms from "./src/scenes/frontrooms.js";
 
 const config = {
     type: Phaser.AUTO,
