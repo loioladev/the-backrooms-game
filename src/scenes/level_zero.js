@@ -260,7 +260,7 @@ export default class LevelZero extends Phaser.Scene {
             if (Math.abs(playerLocation.x - doorLocation[i].x) <= 16 && Math.abs(playerLocation.y - doorLocation[i].y) <= 16) {
                 this.cameras.main.fadeOut(2000);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('LevelOne');
+                    this.scene.start('TextScene', { text: 'Descubra o enigma enquanto houver luz.\nNa escuridão, CORRA !', nextScene: 'LevelOne' });
                 });
             }
         }
