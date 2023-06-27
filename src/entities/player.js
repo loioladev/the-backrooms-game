@@ -166,5 +166,4 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.vision.x = this.x;
         this.vision.y = this.y;
     }
-
 }
