@@ -167,10 +167,4 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.vision.y = this.y;
     }
 
-    hideFogOfWar() {
-        this.rt.x = 700;
-        this.rt.y = -50;
-        this.vision.x = 700;
-        this.vision.y = -50;
-    }
 }
