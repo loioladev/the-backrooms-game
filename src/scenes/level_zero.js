@@ -28,7 +28,7 @@ export default class LevelZero extends Phaser.Scene {
         this.cameras.main.setBackgroundColor('#000000');
         this.cameras.main.fadeIn(2000);
 
-        this.themeSong = this.sound.add('level0_music', { volume: 0.15, loop: true });
+        this.themeSong = this.sound.add('level0_music', { volume: 0.1, loop: true });
         this.themeSong.play();
 
         this.card = this.add.image(0, 0, 'card');
@@ -104,7 +104,7 @@ export default class LevelZero extends Phaser.Scene {
         this.endingDoor()
 
         // show notes for player
-        this.showNotes()
+        let moveMonster = this.showNotes()
 
         // show card
         if (this.hasCard) {
@@ -117,21 +117,23 @@ export default class LevelZero extends Phaser.Scene {
         if (this.player.body.enable)
             this.player.update(this.cursors, 80);
 
-        this.updateMonsterMovement();
+
+        this.updateMonsterMovement(moveMonster);
     }
 
-    updateMonsterMovement() {
+    updateMonsterMovement(moveMonster) {
         this.timeMovement++;
-        if (this.stopMonsters) {
+
+        if (!moveMonster){
             this.allMonsters.getChildren().forEach(monster => {
                 monster.body.setVelocity(0, 0);
             })
+            return;
         }
-        else {
-            this.allMonsters.getChildren().forEach(monster => {
-                monster.random_movement(30, this.timeMovement);
-            })
-        }
+
+        this.allMonsters.getChildren().forEach(monster => {
+            monster.random_movement(30, this.timeMovement);
+        })
     }
 
     handleMonsterCollision() {
@@ -142,7 +144,7 @@ export default class LevelZero extends Phaser.Scene {
 
         this.cameras.main.fadeOut(2000);
         this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start('TextScene', { text: 'Você morreu. Tente novamente.', nextScene: 'LevelZero' });
+            this.scene.start('TextScene', { text: 'Você morreu. Tente novamente.', nextScene: 'LevelZero', timeText: 3000 });
         });
     }
 
@@ -152,22 +154,23 @@ export default class LevelZero extends Phaser.Scene {
         const notes = [this.note1, this.note2, this.note3, this.note4, this.card];
         const notesLocation = this.notesPosition;
 
+        let moveMonster = true;
         notes.forEach((note, index) => {
             const noteLocation = notesLocation[index];
+            if (index === 4 && note.visible) {
+                this.hasCard = true;
+            }
             if (Math.abs(playerLocation.x - noteLocation.x) <= 32 && Math.abs(playerLocation.y - noteLocation.y) <= 32) {
                 note.setVisible(true);
                 note.x = cameraLocation.x;
                 note.y = cameraLocation.y;
-                this.stopMonsters = true;
+                moveMonster = false;
             }
             else {
-                this.stopMonsters = false;
                 note.setVisible(false);
             }
-            if (index === 4 && note.visible) {
-                this.hasCard = true;
-            }
         })
+        return moveMonster
     }
 
     endingDoor() {
