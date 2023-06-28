@@ -152,21 +152,29 @@ export default class LevelOne extends Phaser.Scene {
         const spawnPointMonster2 = map.findObject("Monsters", obj => obj.name === "monster2");
         const spawnPointMonster3 = map.findObject("Monsters", obj => obj.name === "monster3");
         const spawnPointMonster4 = map.findObject("Monsters", obj => obj.name === "monster4");
+        const spawnPointMonster5 = map.findObject("Monsters", obj => obj.name === "monster5");
+        const spawnPointMonster6 = map.findObject("Monsters", obj => obj.name === "monster6");
 
         this.monster1 = new Monster(this, spawnPointMonster1.x, spawnPointMonster1.y, 'lantern', 'lantern');
         this.monster1.setSize(10, 16);
         this.monster2 = new Monster(this, spawnPointMonster2.x, spawnPointMonster2.y, 'lantern', 'lantern');
         this.monster2.setSize(10, 16);
+        this.monster6 = new Monster(this, spawnPointMonster6.x, spawnPointMonster6.y, 'lantern', 'lantern');
+        this.monster6.setSize(10, 16);
         this.monster3 = new Monster(this, spawnPointMonster3.x, spawnPointMonster3.y, 'devour', 'devour');
         this.monster3.setSize(10, 16);
         this.monster4 = new Monster(this, spawnPointMonster4.x, spawnPointMonster4.y, 'devour', 'devour');
         this.monster4.setSize(10, 16);
+        this.monster5 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'devour', 'devour');
+        this.monster5.setSize(10, 16);
 
         var allMonsters = this.physics.add.group();
         allMonsters.add(this.monster1);
         allMonsters.add(this.monster2);
         allMonsters.add(this.monster3);
         allMonsters.add(this.monster4);
+        allMonsters.add(this.monster5)
+        allMonsters.add(this.monster6)
         allMonsters.setDepth(9);
 
         // Add collision between monster and world/decoration
@@ -174,12 +182,16 @@ export default class LevelOne extends Phaser.Scene {
         this.physics.add.collider(this.monster2, this.worldLayer);
         this.physics.add.collider(this.monster3, this.worldLayer);
         this.physics.add.collider(this.monster4, this.worldLayer);
+        this.physics.add.collider(this.monster5, this.worldLayer);
+        this.physics.add.collider(this.monster6, this.worldLayer);
 
         // Add collision between player and monster
         this.physics.add.collider(this.player, this.monster1, this.handleMonsterCollision, null, this);
         this.physics.add.collider(this.player, this.monster2, this.handleMonsterCollision, null, this);
         this.physics.add.collider(this.player, this.monster3, this.handleMonsterCollision, null, this);
         this.physics.add.collider(this.player, this.monster4, this.handleMonsterCollision, null, this);
+        this.physics.add.collider(this.player, this.monster5, this.handleMonsterCollision, null, this);
+        this.physics.add.collider(this.player, this.monster6, this.handleMonsterCollision, null, this);
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -278,6 +290,16 @@ export default class LevelOne extends Phaser.Scene {
                 this.monster4.setActive(true);
                 this.monster4.setVisible(true);
             }
+            if (!this.monster5.active) {
+                this.physics.world.enable(this.monster5); // Ativa a física do monstro
+                this.monster5.setActive(true);
+                this.monster5.setVisible(true);
+            }
+            if (!this.monster6.active) {
+                this.physics.world.enable(this.monster6); // Ativa a física do monstro
+                this.monster6.setActive(true);
+                this.monster6.setVisible(true);
+            }
 
             // Atualizar o efeito da máscara de luz do jogador
             this.player.updateFogOfWar();
@@ -289,6 +311,8 @@ export default class LevelOne extends Phaser.Scene {
             this.updateMonsterChase(this.monster2);
             this.updateMonsterChase(this.monster3);
             this.updateMonsterChase(this.monster4);
+            this.updateMonsterChase(this.monster5);
+            this.updateMonsterChase(this.monster6);
 
         } else {
 
@@ -312,6 +336,16 @@ export default class LevelOne extends Phaser.Scene {
                 this.monster4.setActive(false);
                 this.monster4.setVisible(false);
                 this.physics.world.disable(this.monster4); // Desativa a física do monstro
+            }
+            if (this.monster5.active) {
+                this.monster5.setActive(false);
+                this.monster5.setVisible(false);
+                this.physics.world.disable(this.monster5); // Desativa a física do monstro
+            }
+            if (this.monster6.active) {
+                this.monster6.setActive(false);
+                this.monster6.setVisible(false);
+                this.physics.world.disable(this.monster6); // Desativa a física do monstro
             }
 
             this.player.hideFogOfWar();
@@ -366,37 +400,37 @@ export default class LevelOne extends Phaser.Scene {
         const playerLocation = { x: this.player.x, y: this.player.y };
         const paintingsLocation = this.paintingsPosition;
         const cameraLocation = { x: this.cameras.main.scrollX + 150, y: this.cameras.main.scrollY + 150 };
-        if (Math.abs(playerLocation.x - paintingsLocation[0].x) <= 32 && Math.abs(playerLocation.y - paintingsLocation[0].y) <= 32) {
+        if (Math.abs(playerLocation.x - paintingsLocation[0].x) <= 16 && Math.abs(playerLocation.y - paintingsLocation[0].y) <= 16) {
             this.painting1.setVisible(true);
             this.painting1.x = cameraLocation.x
             this.painting1.y = cameraLocation.y
         }
-        else if (Math.abs(playerLocation.x - paintingsLocation[1].x) <= 32 && Math.abs(playerLocation.y - paintingsLocation[1].y) <= 32) {
+        else if (Math.abs(playerLocation.x - paintingsLocation[1].x) <= 16 && Math.abs(playerLocation.y - paintingsLocation[1].y) <= 16) {
             this.painting2.setVisible(true);
             this.painting2.x = cameraLocation.x
             this.painting2.y = cameraLocation.y
         }
-        else if (Math.abs(playerLocation.x - paintingsLocation[2].x) <= 32 && Math.abs(playerLocation.y - paintingsLocation[2].y) <= 32) {
+        else if (Math.abs(playerLocation.x - paintingsLocation[2].x) <= 16 && Math.abs(playerLocation.y - paintingsLocation[2].y) <= 16) {
             this.painting3.setVisible(true);
             this.painting3.x = cameraLocation.x
             this.painting3.y = cameraLocation.y
         }
-        else if (Math.abs(playerLocation.x - paintingsLocation[3].x) <= 32 && Math.abs(playerLocation.y - paintingsLocation[3].y) <= 32) {
+        else if (Math.abs(playerLocation.x - paintingsLocation[3].x) <= 16 && Math.abs(playerLocation.y - paintingsLocation[3].y) <= 16) {
             this.painting4.setVisible(true);
             this.painting4.x = cameraLocation.x
             this.painting4.y = cameraLocation.y
         }
-        else if (Math.abs(playerLocation.x - paintingsLocation[4].x) <= 32 && Math.abs(playerLocation.y - paintingsLocation[4].y) <= 32) {
+        else if (Math.abs(playerLocation.x - paintingsLocation[4].x) <= 16 && Math.abs(playerLocation.y - paintingsLocation[4].y) <= 16) {
             this.painting5.setVisible(true);
             this.painting5.x = cameraLocation.x
             this.painting5.y = cameraLocation.y
         }
-        else if (Math.abs(playerLocation.x - paintingsLocation[5].x) <= 32 && Math.abs(playerLocation.y - paintingsLocation[5].y) <= 32) {
+        else if (Math.abs(playerLocation.x - paintingsLocation[5].x) <= 16 && Math.abs(playerLocation.y - paintingsLocation[5].y) <= 16) {
             this.painting6.setVisible(true);
             this.painting6.x = cameraLocation.x
             this.painting6.y = cameraLocation.y
         }
-        else if (Math.abs(playerLocation.x - paintingsLocation[6].x) <= 32 && Math.abs(playerLocation.y - paintingsLocation[6].y) <= 32) {
+        else if (Math.abs(playerLocation.x - paintingsLocation[6].x) <= 16 && Math.abs(playerLocation.y - paintingsLocation[6].y) <= 16) {
             this.painting7.setVisible(true);
             this.painting7.x = cameraLocation.x
             this.painting7.y = cameraLocation.y
@@ -528,7 +562,7 @@ export default class LevelOne extends Phaser.Scene {
     messages() {
         const playerLocation = { x: this.player.x, y: this.player.y };
         const buttonsLocation = this.buttonsPosition;
-        if (Math.abs((playerLocation.x - buttonsLocation[2].x) <= 50 && Math.abs(playerLocation.y - buttonsLocation[2].y) <= 50) && this.answer == false) {
+        if (Math.abs(playerLocation.x - buttonsLocation[2].x) <= 60 && Math.abs(playerLocation.y - buttonsLocation[2].y) <= 60 && this.answer == false) {
             this.msgState = 2;
             this.msgDesvende.setVisible(false);
         }
