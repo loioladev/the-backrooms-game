@@ -14,18 +14,22 @@ export default class LevelZero extends Phaser.Scene {
         this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level0_template.json');
         this.load.spritesheet('player', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('walker', 'assets/sprites/walker.png', { frameWidth: 16, frameHeight: 16 })
-        this.load.image('vision', 'assets/mask.png');
 
         this.load.image('note1', 'assets/level0/notas1.png');
         this.load.image('note2', 'assets/level0/notas2.png');
         this.load.image('note3', 'assets/level0/notas3.png');
         this.load.image('note4', 'assets/level0/notafinal.png');
         this.load.image('card', 'assets/level0/card.png');
+
+        this.load.audio('level0_music', 'assets/sounds/level0_music.mp3');
     }
 
     create() {
         this.cameras.main.setBackgroundColor('#000000');
         this.cameras.main.fadeIn(2000);
+
+        this.themeSong = this.sound.add('level0_music', { volume: 0.15, loop: true });
+        this.themeSong.play();
 
         this.card = this.add.image(0, 0, 'card');
         this.hasCard = false;
@@ -72,59 +76,20 @@ export default class LevelZero extends Phaser.Scene {
         this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player');
         // Ajustar tamanho do personagem para colisão
         this.player.body.setSize(10, 16);
-        // Make fog of war effect
-        this.player.createFogOfWar(this, 'vision')
-
-
-        // Add monsters of the map ------------------
-        const spawnPointMonster1 = map.findObject("Spawnpoints", obj => obj.name === "Monster1");
-        this.monster1 = new Monster(this, spawnPointMonster1.x, spawnPointMonster1.y, 'walker');
-        this.monster1.setSize(10, 16);
-        const spawnPointMonster2 = map.findObject("Spawnpoints", obj => obj.name === "Monster2");
-        this.monster2 = new Monster(this, spawnPointMonster2.x, spawnPointMonster2.y, 'walker');
-        this.monster2.setSize(10, 16);
-        const spawnPointMonster3 = map.findObject("Spawnpoints", obj => obj.name === "Monster3");
-        this.monster3 = new Monster(this, spawnPointMonster3.x, spawnPointMonster3.y, 'walker');
-        this.monster3.setSize(10, 16);
-        const spawnPointMonster4 = map.findObject("Spawnpoints", obj => obj.name === "Monster4");
-        this.monster4 = new Monster(this, spawnPointMonster4.x, spawnPointMonster4.y, 'walker');
-        this.monster4.setSize(10, 16);
-        const spawnPointMonster5 = map.findObject("Spawnpoints", obj => obj.name === "Monster5");
-        this.monster5 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
-        this.monster5.setSize(10, 16);
-        const spawnPointMonster6 = map.findObject("Spawnpoints", obj => obj.name === "Monster6");
-        this.monster6 = new Monster(this, spawnPointMonster6.x, spawnPointMonster6.y, 'walker');
-        this.monster6.setSize(10, 16);
-        this.monster7 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
-        this.monster7.setSize(10, 16);
-        this.monster8 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
-        this.monster8.setSize(10, 16);
-        this.monster9 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
-        this.monster9.setSize(10, 16);
-        this.monster10 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
-        this.monster10.setSize(10, 16);
-        this.monster11 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'walker');
-        this.monster11.setSize(10, 16);
-
         // Add player physics
-        this.physics.add.collider(this.player, worldLayer);
-        this.physics.add.collider(this.player, decorationLayer);
+        this.physics.add.collider(this.player, [worldLayer, decorationLayer]);
 
-        let allMonsters = this.physics.add.group();
-        allMonsters.add(this.monster1);
-        allMonsters.add(this.monster2);
-        allMonsters.add(this.monster3);
-        allMonsters.add(this.monster4);
-        allMonsters.add(this.monster5);
-        allMonsters.add(this.monster6);
-        allMonsters.add(this.monster7);
-        allMonsters.add(this.monster8);
-        allMonsters.add(this.monster9);
-        allMonsters.add(this.monster10);
-        allMonsters.add(this.monster11);
-        this.physics.add.collider(allMonsters, worldLayer);
-        this.physics.add.collider(allMonsters, decorationLayer);
-        this.physics.add.collider(this.player, this.monster1, this.handleMonsterCollision, null, this);
+        // Add monsters of the map
+        const spawnPoints = map.filterObjects("Spawnpoints", obj => obj.name.startsWith("Monster"));
+        this.allMonsters = this.physics.add.group();
+
+        spawnPoints.forEach((spawnPoint, index) => {
+            const monster = new Monster(this, spawnPoint.x, spawnPoint.y, 'walker');
+            monster.setSize(10, 16);
+            this.allMonsters.add(monster);
+        });
+        this.physics.add.collider(this.player, this.allMonsters, this.handleMonsterCollision, null, this);
+        this.physics.add.collider(this.allMonsters, [worldLayer, decorationLayer]);
 
         // Make camera follow player
         this.cameras.main.startFollow(this.player);
@@ -137,6 +102,7 @@ export default class LevelZero extends Phaser.Scene {
     update() {
         // verify if player is in the door
         this.endingDoor()
+
         // show notes for player
         this.showNotes()
 
@@ -151,22 +117,21 @@ export default class LevelZero extends Phaser.Scene {
         if (this.player.body.enable)
             this.player.update(this.cursors, 80);
 
-        // Update player fog of war effect
-        this.player.updateFogOfWar();
+        this.updateMonsterMovement();
+    }
 
-        // Update monster movement
+    updateMonsterMovement() {
         this.timeMovement++;
-        this.monster1.random_movement(30, this.timeMovement);
-        this.monster2.random_movement(30, this.timeMovement);
-        this.monster3.random_movement(30, this.timeMovement);
-        this.monster4.random_movement(30, this.timeMovement);
-        this.monster5.random_movement(30, this.timeMovement);
-        this.monster6.random_movement(30, this.timeMovement);
-        this.monster7.random_movement(30, this.timeMovement);
-        this.monster8.random_movement(30, this.timeMovement);
-        this.monster9.random_movement(30, this.timeMovement);
-        this.monster10.random_movement(30, this.timeMovement);
-        this.monster11.random_movement(30, this.timeMovement);
+        if (this.stopMonsters) {
+            this.allMonsters.getChildren().forEach(monster => {
+                monster.body.setVelocity(0, 0);
+            })
+        }
+        else {
+            this.allMonsters.getChildren().forEach(monster => {
+                monster.random_movement(30, this.timeMovement);
+            })
+        }
     }
 
     handleMonsterCollision() {
@@ -183,37 +148,26 @@ export default class LevelZero extends Phaser.Scene {
 
     showNotes() {
         const playerLocation = { x: this.player.x, y: this.player.y };
+        const cameraLocation = { x: this.cameras.main.scrollX + 150, y: this.cameras.main.scrollY + 150 };
+        const notes = [this.note1, this.note2, this.note3, this.note4, this.card];
         const notesLocation = this.notesPosition;
-        const cameraLocation = { x: this.cameras.main.scrollX + 150, y: this.cameras.main.scrollY + 150};
-        if (Math.abs(playerLocation.x - notesLocation[0].x) <= 32 && Math.abs(playerLocation.y - notesLocation[0].y) <= 32) {
-            this.note1.setVisible(true);
-            this.note1.x = cameraLocation.x
-            this.note1.y = cameraLocation.y
-        }
-        else if (Math.abs(playerLocation.x - notesLocation[1].x) <= 32 && Math.abs(playerLocation.y - notesLocation[1].y) <= 32) {
-            this.note2.setVisible(true);
-            this.note2.x = cameraLocation.x
-            this.note2.y = cameraLocation.y
-        }
-        else if (Math.abs(playerLocation.x - notesLocation[2].x) <= 32 && Math.abs(playerLocation.y - notesLocation[2].y) <= 32) {
-            this.note3.setVisible(true);
-            this.note3.x = cameraLocation.x
-            this.note3.y = cameraLocation.y
-        }
-        else if (Math.abs(playerLocation.x - notesLocation[3].x) <= 32 && Math.abs(playerLocation.y - notesLocation[3].y) <= 32) {
-            this.note4.setVisible(true);
-            this.note4.x = cameraLocation.x
-            this.note4.y = cameraLocation.y
-        }
-        else if (Math.abs(playerLocation.x - notesLocation[4].x) <= 32 && Math.abs(playerLocation.y - notesLocation[4].y) <= 32) {
-            this.hasCard = true;
-        }
-        else {
-            this.note1.setVisible(false);
-            this.note2.setVisible(false);
-            this.note3.setVisible(false);
-            this.note4.setVisible(false);
-        }
+
+        notes.forEach((note, index) => {
+            const noteLocation = notesLocation[index];
+            if (Math.abs(playerLocation.x - noteLocation.x) <= 32 && Math.abs(playerLocation.y - noteLocation.y) <= 32) {
+                note.setVisible(true);
+                note.x = cameraLocation.x;
+                note.y = cameraLocation.y;
+                this.stopMonsters = true;
+            }
+            else {
+                this.stopMonsters = false;
+                note.setVisible(false);
+            }
+            if (index === 4 && note.visible) {
+                this.hasCard = true;
+            }
+        })
     }
 
     endingDoor() {
@@ -227,6 +181,7 @@ export default class LevelZero extends Phaser.Scene {
 
         for (var i = 0; i < doorLocation.length; i++) {
             if (Math.abs(playerLocation.x - doorLocation[i].x) <= 16 && Math.abs(playerLocation.y - doorLocation[i].y) <= 16) {
+                this.themeSong.stop();
                 this.cameras.main.fadeOut(2000);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.scene.start('TextScene', { text: 'Descubra o enigma enquanto houver luz.\nNa escuridão, CORRA !', nextScene: 'LevelOne' });
