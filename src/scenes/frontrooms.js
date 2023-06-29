@@ -61,7 +61,7 @@ export default class Frontrooms extends Phaser.Scene {
                     onComplete: () => {
                         this.cameras.main.fadeOut(2000);
                         this.cameras.main.once('camerafadeoutcomplete', () => {
-                            this.scene.start('TextScene', { text: 'Você noclipou da realidade nas áreas erradas e apareceu nas Backrooms. Deus o salve se você ouvir algo vagando por perto, pois com toda certeza ele ouviu você.', nextScene: 'LevelOne' });
+                            this.scene.start('TextScene', { text: 'Você foi teletransportado da sua realidade nas áreas erradas e apareceu nas Backrooms. Deus o salve se você ouvir algo vagando por perto, pois com toda certeza ele ouviu você.', nextScene: 'LevelZero' });
                         });
                     }
                 });
