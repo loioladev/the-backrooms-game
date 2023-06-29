@@ -10,6 +10,10 @@ export default class TextScene extends Phaser.Scene {
         this.cameras.main.fadeIn(2000);
         this.text = data.text;
 
+        if (!data.timeText){
+            data.timeText = 5000;
+        }
+
         const textConfig = {
             fontSize: '16px',
             fill: '#ffffff',
@@ -25,6 +29,6 @@ export default class TextScene extends Phaser.Scene {
                 this.nextScene = data.nextScene;
                 this.scene.start(this.nextScene);
             });
-        }, 6000);
+        }, data.timeText);
     }
 }
