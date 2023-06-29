@@ -15,6 +15,7 @@ export default class LevelZero extends Phaser.Scene {
         this.load.spritesheet('player', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('walker', 'assets/sprites/walker.png', { frameWidth: 16, frameHeight: 16 })
 
+        this.load.image('vision', 'assets/mask.png')
         this.load.image('note1', 'assets/level0/notas1.png');
         this.load.image('note2', 'assets/level0/notas2.png');
         this.load.image('note3', 'assets/level0/notas3.png');
@@ -22,6 +23,7 @@ export default class LevelZero extends Phaser.Scene {
         this.load.image('card', 'assets/level0/card.png');
 
         this.load.audio('level0_music', 'assets/sounds/level0_music.mp3');
+        this.load.audio('walker_sound', 'assets/sounds/walker.mp3');
     }
 
     create() {
@@ -29,7 +31,9 @@ export default class LevelZero extends Phaser.Scene {
         this.cameras.main.fadeIn(2000);
 
         this.themeSong = this.sound.add('level0_music', { volume: 0.1, loop: true });
+        this.walkerSound = this.sound.add('walker_sound', { volume: 0.0, loop: true });
         this.themeSong.play();
+        this.walkerSound.play();
 
         this.card = this.add.image(0, 0, 'card');
         this.hasCard = false;
@@ -78,6 +82,7 @@ export default class LevelZero extends Phaser.Scene {
         this.player.body.setSize(10, 16);
         // Add player physics
         this.physics.add.collider(this.player, [worldLayer, decorationLayer]);
+        this.player.createFogOfWar(this, 'vision', 0.5, 0.7)
 
         // Add monsters of the map
         const spawnPoints = map.filterObjects("Spawnpoints", obj => obj.name.startsWith("Monster"));
@@ -114,9 +119,9 @@ export default class LevelZero extends Phaser.Scene {
         }
 
         // Update player movement
+        this.player.updateFogOfWar()
         if (this.player.body.enable)
             this.player.update(this.cursors, 80);
-
 
         this.updateMonsterMovement(moveMonster);
     }
@@ -134,6 +139,22 @@ export default class LevelZero extends Phaser.Scene {
         this.allMonsters.getChildren().forEach(monster => {
             monster.random_movement(30, this.timeMovement);
         })
+
+        let playSong = false;
+        let songVolume = 1.0;
+        this.allMonsters.getChildren().forEach(monster => {
+            let distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, monster.x, monster.y);
+            if (distance <= 100) {
+                playSong = true;
+                songVolume = 0.6 - Math.min((distance / 100), 0.6);
+            }
+        })
+        if (playSong) {
+            this.walkerSound.volume = songVolume;
+        }
+        else {
+            this.walkerSound.volume = 0.0;
+        }
     }
 
     handleMonsterCollision() {
@@ -141,6 +162,9 @@ export default class LevelZero extends Phaser.Scene {
         this.player.body.enable = false; // Disable player physics
         this.player.setTint(0xff0000); // Set player tint to red
         this.player.anims.play(this.player.idle, true); // Play player idle animation
+
+        this.themeSong.stop();
+        this.walkerSound.stop();
 
         this.cameras.main.fadeOut(2000);
         this.cameras.main.once('camerafadeoutcomplete', () => {
@@ -185,6 +209,7 @@ export default class LevelZero extends Phaser.Scene {
         for (var i = 0; i < doorLocation.length; i++) {
             if (Math.abs(playerLocation.x - doorLocation[i].x) <= 16 && Math.abs(playerLocation.y - doorLocation[i].y) <= 16) {
                 this.themeSong.stop();
+                this.walkerSound.stop();
                 this.cameras.main.fadeOut(2000);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.scene.start('TextScene', { text: 'Descubra o enigma enquanto houver luz.\nNa escuridão, CORRA !', nextScene: 'LevelOne' });
