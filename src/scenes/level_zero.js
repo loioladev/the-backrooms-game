@@ -14,16 +14,18 @@ export default class LevelZero extends Phaser.Scene {
         this.load.tilemapTiledJSON('map', 'assets/tilemaps_json/level0_template.json');
         this.load.spritesheet('player', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('walker', 'assets/sprites/walker.png', { frameWidth: 16, frameHeight: 16 })
-
         this.load.image('vision', 'assets/mask.png')
+
         this.load.image('note1', 'assets/level0/notas1.png');
         this.load.image('note2', 'assets/level0/notas2.png');
         this.load.image('note3', 'assets/level0/notas3.png');
         this.load.image('note4', 'assets/level0/notafinal.png');
         this.load.image('card', 'assets/level0/card.png');
 
+
         this.load.audio('level0_music', 'assets/sounds/level0_music.mp3');
         this.load.audio('walker_sound', 'assets/sounds/walker.mp3');
+
     }
 
     create() {
@@ -80,6 +82,7 @@ export default class LevelZero extends Phaser.Scene {
         this.player = new Player(this, spawnPoint.x, spawnPoint.y, 'player');
         // Ajustar tamanho do personagem para colisão
         this.player.body.setSize(10, 16);
+
         // Add player physics
         this.physics.add.collider(this.player, [worldLayer, decorationLayer]);
         this.player.createFogOfWar(this, 'vision', 0.5, 0.7)
@@ -96,6 +99,7 @@ export default class LevelZero extends Phaser.Scene {
         this.physics.add.collider(this.player, this.allMonsters, this.handleMonsterCollision, null, this);
         this.physics.add.collider(this.allMonsters, [worldLayer, decorationLayer]);
 
+
         // Make camera follow player
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -110,6 +114,7 @@ export default class LevelZero extends Phaser.Scene {
 
         // show notes for player
         let moveMonster = this.showNotes()
+
 
         // show card
         if (this.hasCard) {
@@ -174,6 +179,7 @@ export default class LevelZero extends Phaser.Scene {
 
     showNotes() {
         const playerLocation = { x: this.player.x, y: this.player.y };
+
         const cameraLocation = { x: this.cameras.main.scrollX + 150, y: this.cameras.main.scrollY + 150 };
         const notes = [this.note1, this.note2, this.note3, this.note4, this.card];
         const notesLocation = this.notesPosition;
@@ -208,8 +214,10 @@ export default class LevelZero extends Phaser.Scene {
 
         for (var i = 0; i < doorLocation.length; i++) {
             if (Math.abs(playerLocation.x - doorLocation[i].x) <= 16 && Math.abs(playerLocation.y - doorLocation[i].y) <= 16) {
+              
                 this.themeSong.stop();
                 this.walkerSound.stop();
+              
                 this.cameras.main.fadeOut(2000);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.scene.start('TextScene', { text: 'Descubra o enigma enquanto houver luz.\nNa escuridão, CORRA !', nextScene: 'LevelOne' });
