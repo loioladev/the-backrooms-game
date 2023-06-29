@@ -8,6 +8,11 @@ const config = {
     backgroundColor: '#000000',
     pixelArt: true,
     zoom: 3,
+    roundPixels: true,
+    render: {
+        pixelArt: true,
+        antialias: true
+    },
     physics: {
         default: "arcade",
         arcade: {

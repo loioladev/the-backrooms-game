@@ -17,10 +17,16 @@ export default class Frontrooms extends Phaser.Scene {
         this.load.image('tiles-frontrooms', 'assets/tilemaps/frontrooms_template.png');
         this.load.tilemapTiledJSON('map-frontrooms', 'assets/tilemaps_json/frontrooms.json');
         this.load.spritesheet('player-frontrooms', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.audio('frontrooms_soundtrack', 'assets/sounds/frontrooms_music.mp3')
     }
     
     create() {
         this.cameras.main.setBackgroundColor('#000000');
+
+        this.themeSong = this.sound.add('frontrooms_soundtrack', { volume: 0.5, loop: true });
+        this.themeSong.play();
+        console.log(this.themeSong.volume )
+
         const map = this.make.tilemap({ key: 'map-frontrooms' });
         const tileset = map.addTilesetImage('frontrooms', 'tiles-frontrooms');
 
@@ -47,6 +53,7 @@ export default class Frontrooms extends Phaser.Scene {
         const startButton = this.add.text(80, 145, 'Começar Jogo', { fontSize: '18px', fill: '#000000', stroke: '#ffffff', strokeThickness: 2, fontFamily: 'Lucida Console' })
             .setInteractive()
             .on('pointerdown', () => {
+                this.themeSong.stop()
                 this.tweens.add({
                     targets: [startButton, this.player],
                     alpha: 0,
@@ -54,7 +61,7 @@ export default class Frontrooms extends Phaser.Scene {
                     onComplete: () => {
                         this.cameras.main.fadeOut(2000);
                         this.cameras.main.once('camerafadeoutcomplete', () => {
-                            this.scene.start('TextScene', { text: 'Você noclipou da realidade nas áreas erradas e apareceu nas Backrooms. Deus o salve se você ouvir algo vagando por perto, pois com toda certeza ele ouviu você.', nextScene: 'LevelZero' });
+                            this.scene.start('TextScene', { text: 'Você foi teletransportado da sua realidade nas áreas erradas e apareceu nas Backrooms. Deus o salve se você ouvir algo vagando por perto, pois com toda certeza ele ouviu você.', nextScene: 'LevelZero' });
                         });
                     }
                 });
