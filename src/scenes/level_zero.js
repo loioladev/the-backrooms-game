@@ -28,7 +28,10 @@ export default class LevelZero extends Phaser.Scene {
 
     }
 
-    create() {
+    create(data) {
+        this.startTime = this.time.now / 1000;
+        this.playerInfo = data.playerInfo;
+
         this.cameras.main.setBackgroundColor('#000000');
         this.cameras.main.fadeIn(2000);
 
@@ -84,7 +87,7 @@ export default class LevelZero extends Phaser.Scene {
         this.player.body.setSize(10, 16);
 
         // Add player physics
-        this.physics.add.collider(this.player, [worldLayer, decorationLayer]);
+        //this.physics.add.collider(this.player, [worldLayer, decorationLayer]); remover
         this.player.createFogOfWar(this, 'vision', 0.5, 0.7)
 
         // Add monsters of the map
@@ -126,7 +129,7 @@ export default class LevelZero extends Phaser.Scene {
         // Update player movement
         this.player.updateFogOfWar()
         if (this.player.body.enable)
-            this.player.update(this.cursors, 80);
+            this.player.update(this.cursors, 200); // remover
 
         this.updateMonsterMovement(moveMonster);
     }
@@ -163,6 +166,7 @@ export default class LevelZero extends Phaser.Scene {
     }
 
     handleMonsterCollision() {
+        return; // remover
         this.player.disableInteractive();
         this.player.body.enable = false; // Disable player physics
         this.player.setTint(0xff0000); // Set player tint to red
@@ -173,7 +177,7 @@ export default class LevelZero extends Phaser.Scene {
 
         this.cameras.main.fadeOut(2000);
         this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start('TextScene', { text: 'Você morreu. Tente novamente.', nextScene: 'LevelZero', timeText: 3000 });
+            this.scene.start('TextScene', { text: 'Você morreu. Tente novamente.', nextScene: 'LevelZero', timeText: 3000, playerInfo: this.playerInfo });
         });
     }
 
@@ -214,13 +218,19 @@ export default class LevelZero extends Phaser.Scene {
 
         for (var i = 0; i < doorLocation.length; i++) {
             if (Math.abs(playerLocation.x - doorLocation[i].x) <= 16 && Math.abs(playerLocation.y - doorLocation[i].y) <= 16) {
-              
+                // Atualizar jogador no banco de dados
+                let timePassed = (this.time.now / 1000) - this.startTime;
+                let playerInfo = this.playerInfo;
+                playerInfo.totalTime += timePassed;
+                playerInfo.lastTime = timePassed;
+                playerInfo.map = 'level0'
+
                 this.themeSong.stop();
                 this.walkerSound.stop();
               
                 this.cameras.main.fadeOut(2000);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('TextScene', { text: 'Descubra o enigma enquanto houver luz.\nNa escuridão, CORRA !', nextScene: 'LevelOne' });
+                    this.scene.start('TextScene', { text: 'Descubra o enigma enquanto houver luz.\nNa escuridão, CORRA !', nextScene: 'LevelOne' , playerInfo: playerInfo});
                 });
             }
         }

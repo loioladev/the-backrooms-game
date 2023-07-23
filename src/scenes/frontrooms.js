@@ -50,9 +50,16 @@ export default class Frontrooms extends Phaser.Scene {
 
         this.add.image(150, 60, 'logo').setDepth(11).setScale(0.3)
         this.add.text(30, 105, 'The Backrooms', { fontSize: '32px', fill: '#000000', fontFamily: 'Lucida Console', stroke: '#000000', strokeThickness: 2 }).setDepth(11)
+        
         const startButton = this.add.text(80, 145, 'Começar Jogo', { fontSize: '18px', fill: '#000000', stroke: '#ffffff', strokeThickness: 2, fontFamily: 'Lucida Console' })
             .setInteractive()
             .on('pointerdown', () => {
+                const playerInfo = {
+                    name: prompt("Digite seu nick (nicks já existentes não serão aceitos para o score):"),
+                    totalTime: 0,
+                    lastTime: 0,
+                    map: 'start'
+                }
                 this.themeSong.stop()
                 this.tweens.add({
                     targets: [startButton, this.player],
@@ -61,7 +68,7 @@ export default class Frontrooms extends Phaser.Scene {
                     onComplete: () => {
                         this.cameras.main.fadeOut(2000);
                         this.cameras.main.once('camerafadeoutcomplete', () => {
-                            this.scene.start('TextScene', { text: 'Você foi teletransportado da sua realidade nas áreas erradas e apareceu nas Backrooms. Deus o salve se você ouvir algo vagando por perto, pois com toda certeza ele ouviu você.', nextScene: 'LevelZero' });
+                            this.scene.start('TextScene', { text: 'Você foi teletransportado da sua realidade nas áreas erradas e apareceu nas Backrooms. Deus o salve se você ouvir algo vagando por perto, pois com toda certeza ele ouviu você.', nextScene: 'LevelZero', playerInfo: playerInfo});
                         });
                     }
                 });
