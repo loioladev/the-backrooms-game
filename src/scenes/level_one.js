@@ -1,5 +1,46 @@
 import PlayerOne from '../entities/player_level_one.js';
-import Monster from '../entities/monster.js';
+import MonsterOne from '../entities/monster_level_one.js';
+
+/*
+1 - Arrumar sprite monstros
+2 - Arrumar quadro -Done
+3 - Nota com dicas -Done
+4 - Vê um tempo ideal -Done
+5 - Luz no lantern
+6 - Sons -Done
+7 - API
+*/ 
+
+// Definir as constantes de configuração para os monstros
+const devourConfig = {
+    key: 'devour',
+    huntingEndFrame: 8,
+    frameRate: 8,
+    idleFrame: 19,
+    leftStartFrame: 8,
+    leftEndFrame: 15,
+    rightStartFrame: 0,
+    rightEndFrame: 7,
+    upStartFrame: 24,
+    upEndFrame: 31,
+    downStartFrame: 16,
+    downEndFrame: 23,
+};
+
+const lanternConfig = {
+    key: 'lantern',
+    huntingEndFrame: 6,
+    frameRate: 6,
+    idleFrame: 12,
+    leftStartFrame: 6,
+    leftEndFrame: 11,
+    rightStartFrame: 0,
+    rightEndFrame: 5,
+    upStartFrame: 18,
+    upEndFrame: 23,
+    downStartFrame: 12,
+    downEndFrame: 17,
+};
 
 const TILESIZE = 16;
 
@@ -12,23 +53,29 @@ export default class LevelOne extends Phaser.Scene {
         this.load.image('tiles-level-one', 'assets/tilemaps/level1_template.png');
         this.load.tilemapTiledJSON('map-level-one', 'assets/tilemaps_json/level1.json');
         this.load.spritesheet('player-level-one', 'assets/sprites/player.png', { frameWidth: 16, frameHeight: 16 });
-        this.load.spritesheet('lantern', 'assets/sprites/lantern.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('devour', 'assets/sprites/devour.png', { frameWidth: 32, frameHeight: 32 })
+        this.load.spritesheet('lantern-level-one', 'assets/sprites/lantern_level1.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('devour-level-one', 'assets/sprites/devour_level1.png', { frameWidth: 32, frameHeight: 32 })
         this.load.image('dark', 'assets/mask.png');
         this.load.spritesheet('lantern_player', 'assets/sprites/lantern_player.png', { frameWidth: 16, frameHeight: 16 });
-
         this.load.image('painting1', 'assets/level1/carro_beje_quadro.png');
         this.load.image('painting2', 'assets/level1/five_F1.png');
         this.load.image('painting3', 'assets/level1/four_elephants.png');
         this.load.image('painting4', 'assets/level1/one_party_monster.png');
         this.load.image('painting5', 'assets/level1/six_cats.png');
-        this.load.image('painting6', 'assets/level1/three_akaza.png');
+        this.load.image('painting6', 'assets/level1/trigemeos.png');
         this.load.image('painting7', 'assets/level1/two_trees.png');
         this.load.image('coverImage', 'assets/level1/black_image.png');
         this.load.image('desvende', 'assets/level1/desvende.png');
         this.load.image('sala', 'assets/level1/encontre_sala.png');
         this.load.image('saida', 'assets/level1/encontre_saida.png');
         this.load.image('pressionar', 'assets/level1/pressionar.png');
+        this.load.image('nota', 'assets/level1/nota_dicas.png');
+        this.load.audio('chave_sound', 'assets/sounds/chave.mp3')
+        this.load.audio('entity_sound', 'assets/sounds/backrooms-entity.mp3')
+        this.load.audio('ambience_sound', 'assets/sounds/Level1Ambience.mp3')
+        this.load.audio('paper_sound', 'assets/sounds/paper_sound.mp3')
+        this.load.audio('button_sound', 'assets/sounds/pressing-a-button.mp3')
+        this.load.audio('soundtrack', 'assets/sounds/level1_soundtrack.mp3')
     }
 
     create() {
@@ -36,6 +83,7 @@ export default class LevelOne extends Phaser.Scene {
         this.msgSala = this.add.image(0, 0, 'sala');
         this.msgSaida = this.add.image(0, 0, 'saida');
         this.msgPressionar = this.add.image(0, 0, 'pressionar');
+        this.nota = this.add.image(0, 0, 'nota');
         this.painting1 = this.add.sprite(0, 0, 'painting1');
         this.painting2 = this.add.sprite(0, 0, 'painting2');
         this.painting3 = this.add.sprite(0, 0, 'painting3');
@@ -44,6 +92,7 @@ export default class LevelOne extends Phaser.Scene {
         this.painting6 = this.add.sprite(0, 0, 'painting6');
         this.painting7 = this.add.sprite(0, 0, 'painting7');
         this.msgDesvende.setVisible(false);
+        this.nota.setVisible(false);
         this.msgSala.setVisible(false);
         this.msgSaida.setVisible(false);
         this.msgPressionar.setVisible(false);
@@ -55,6 +104,7 @@ export default class LevelOne extends Phaser.Scene {
         this.painting6.setVisible(false);
         this.painting7.setVisible(false);
         this.msgDesvende.setDepth(101);
+        this.nota.setDepth(101);
         this.msgSala.setDepth(101);
         this.msgSaida.setDepth(101);
         this.msgPressionar.setDepth(101);
@@ -72,6 +122,7 @@ export default class LevelOne extends Phaser.Scene {
         this.msgState = 1;
         this.hasKey = false;
         this.next = false;
+        this.dead = false;
 
         this.paintingsPosition = [
             { x: 43 * TILESIZE, y: 63 * TILESIZE },
@@ -113,7 +164,8 @@ export default class LevelOne extends Phaser.Scene {
             { x: 42 * TILESIZE, y: 50 * TILESIZE },
             { x: 43 * TILESIZE, y: 50 * TILESIZE },
             { x: 44 * TILESIZE, y: 50 * TILESIZE },
-            { x: 45 * TILESIZE, y: 50 * TILESIZE }
+            { x: 45 * TILESIZE, y: 50 * TILESIZE },
+            { x: 35 * TILESIZE, y: 30 * TILESIZE} // Nota Position
         ]
 
         // Create the player with physics
@@ -146,7 +198,7 @@ export default class LevelOne extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-        // Make fog of war effect
+        // Make fog effect
         this.player.createFogOfWar(this, 'dark', 0.2, 1);
         const spawnPointMonster1 = map.findObject("Monsters", obj => obj.name === "monster1");
         const spawnPointMonster2 = map.findObject("Monsters", obj => obj.name === "monster2");
@@ -155,17 +207,17 @@ export default class LevelOne extends Phaser.Scene {
         const spawnPointMonster5 = map.findObject("Monsters", obj => obj.name === "monster5");
         const spawnPointMonster6 = map.findObject("Monsters", obj => obj.name === "monster6");
 
-        this.monster1 = new Monster(this, spawnPointMonster1.x, spawnPointMonster1.y, 'lantern', 'lantern');
+        this.monster1 = new MonsterOne(this, spawnPointMonster1.x, spawnPointMonster1.y, 'lantern-level-one', lanternConfig);
         this.monster1.setSize(10, 16);
-        this.monster2 = new Monster(this, spawnPointMonster2.x, spawnPointMonster2.y, 'lantern', 'lantern');
+        this.monster2 = new MonsterOne(this, spawnPointMonster2.x, spawnPointMonster2.y, 'lantern-level-one', lanternConfig);
         this.monster2.setSize(10, 16);
-        this.monster6 = new Monster(this, spawnPointMonster6.x, spawnPointMonster6.y, 'lantern', 'lantern');
+        this.monster6 = new MonsterOne(this, spawnPointMonster6.x, spawnPointMonster6.y, 'lantern-level-one', lanternConfig);
         this.monster6.setSize(10, 16);
-        this.monster3 = new Monster(this, spawnPointMonster3.x, spawnPointMonster3.y, 'devour', 'devour');
+        this.monster3 = new MonsterOne(this, spawnPointMonster3.x, spawnPointMonster3.y, 'devour-level-one', devourConfig);
         this.monster3.setSize(10, 16);
-        this.monster4 = new Monster(this, spawnPointMonster4.x, spawnPointMonster4.y, 'devour', 'devour');
+        this.monster4 = new MonsterOne(this, spawnPointMonster4.x, spawnPointMonster4.y, 'devour-level-one', devourConfig);
         this.monster4.setSize(10, 16);
-        this.monster5 = new Monster(this, spawnPointMonster5.x, spawnPointMonster5.y, 'devour', 'devour');
+        this.monster5 = new MonsterOne(this, spawnPointMonster5.x, spawnPointMonster5.y, 'devour-level-one', devourConfig);
         this.monster5.setSize(10, 16);
 
         var allMonsters = this.physics.add.group();
@@ -177,6 +229,14 @@ export default class LevelOne extends Phaser.Scene {
         allMonsters.add(this.monster6)
         allMonsters.setDepth(9);
 
+        this.monsters = []
+        this.monsters.push(this.monster1);
+        this.monsters.push(this.monster2);
+        this.monsters.push(this.monster3);
+        this.monsters.push(this.monster4);
+        this.monsters.push(this.monster5);
+        this.monsters.push(this.monster6);
+
         // Add collision between monster and world/decoration
         this.physics.add.collider(this.monster1, this.worldLayer);
         this.physics.add.collider(this.monster2, this.worldLayer);
@@ -184,14 +244,6 @@ export default class LevelOne extends Phaser.Scene {
         this.physics.add.collider(this.monster4, this.worldLayer);
         this.physics.add.collider(this.monster5, this.worldLayer);
         this.physics.add.collider(this.monster6, this.worldLayer);
-
-        // Add collision between player and monster
-        this.physics.add.collider(this.player, this.monster1, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster2, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster3, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster4, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster5, this.handleMonsterCollision, null, this);
-        this.physics.add.collider(this.player, this.monster6, this.handleMonsterCollision, null, this);
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -201,11 +253,21 @@ export default class LevelOne extends Phaser.Scene {
             }
         }, this);
 
+        this.ambienceSound = this.sound.add('ambience_sound', { volume: 0.2, loop: true });
+        this.soundtrack = this.sound.add('soundtrack', { volume: 0.1, loop: true });
+        this.entitySound = this.sound.add('entity_sound', { volume: 0.0, loop: true });
+        this.keySound = this.sound.add('chave_sound', { volume: 0.3, loop: false });
+        this.paperSound = this.sound.add('paper_sound', { volume: 0.3, loop: false });
+        this.buttonSound = this.sound.add('button_sound', { volume: 0.3, loop: false });
+        this.ambienceSound.play();
+        this.soundtrack.play();
+        this.entitySound.play();
+
         // Variáveis de controle
-        this.lightMaskActive = false; // Inicialmente a máscara de luz está ativa
+        this.lightMaskActive = false; // Inicialmente a máscara de luz está desativada
         this.bool_skin = false;
-        this.maskDuration = 30000; // Duração total em milissegundos (1 minuto)
-        this.maskDisabledDuration = 20000; // Duração em milissegundos para a máscara desativada (30 segundos)
+        this.maskDuration = 20000; // Duração 20 segundos
+        this.maskDisabledDuration = 60000; // Duração em milissegundos para a máscara desativada (60 segundos)
         this.maskTimer = this.time.addEvent({
             delay: this.maskDuration,
             callback: this.toggleLightMask,
@@ -249,14 +311,23 @@ export default class LevelOne extends Phaser.Scene {
             this.msgSaida.x = this.cameras.main.scrollX + 40;
             this.msgSaida.y = this.cameras.main.scrollY + 20;
         }
+        else if (this.msgState == 5) {
+            if (!this.nota.visible) { 
+                this.paperSound.play();
+            }
+            this.nota.setVisible(true);
+            this.nota.x = this.cameras.main.scrollX + 150;
+            this.nota.y = this.cameras.main.scrollY + 150;
+        }
         else {
             this.msgDesvende.setVisible(false);
             this.msgPressionar.setVisible(false);
             this.msgSala.setVisible(false);
             this.msgSaida.setVisible(false);
+            this.nota.setVisible(false);
         }
 
-        const speed = 80; // pixels por segundo
+        const speed = 100; // pixels por segundo
         this.player.update(this.cursors, speed);
 
         this.botao1Layer.setVisible(this.buttonState[0]);
@@ -313,6 +384,7 @@ export default class LevelOne extends Phaser.Scene {
             this.updateMonsterChase(this.monster4);
             this.updateMonsterChase(this.monster5);
             this.updateMonsterChase(this.monster6);
+            this.updateMonsterSound(this.monsters);
 
         } else {
 
@@ -347,7 +419,7 @@ export default class LevelOne extends Phaser.Scene {
                 this.monster6.setVisible(false);
                 this.physics.world.disable(this.monster6); // Desativa a física do monstro
             }
-
+            this.entitySound.setVolume(0.0);
             this.player.hideFogOfWar();
             if (this.bool_skin == false) {
                 this.player.setSkin(false);
@@ -385,6 +457,13 @@ export default class LevelOne extends Phaser.Scene {
     }
 
     handleMonsterCollision() {
+        this.dead = true;
+        this.ambienceSound.stop();
+        this.entitySound.stop();
+        this.keySound.stop();
+        this.paperSound.stop();
+        this.buttonSound.stop();
+        this.soundtrack.stop();
         this.player.disableInteractive();
         this.player.body.enable = false; // Disable player physics
         this.player.setTint(0xff0000); // Set player tint to red
@@ -436,6 +515,9 @@ export default class LevelOne extends Phaser.Scene {
             this.painting7.y = cameraLocation.y
         }
         else if (Math.abs(playerLocation.x - paintingsLocation[7].x) <= 16 && Math.abs(playerLocation.y - paintingsLocation[7].y) <= 16) {
+            if (this.hasKey == false) {
+                this.keySound.play();
+            }
             this.hasKey = true;
         }
         else {
@@ -455,54 +537,66 @@ export default class LevelOne extends Phaser.Scene {
         if (botao == 1) {
             this.buttonState[0] = !this.buttonState[0];
             if (this.buttonState[0] == true) {
+                this.buttonSound.play();
                 this.buttonSequence.add(1);
             }
             else {
+                this.buttonSound.play();
                 this.buttonSequence.delete(1);
             }
         }
         else if (botao == 2) {
             this.buttonState[1] = !this.buttonState[1];
             if (this.buttonState[1] == true) {
+                this.buttonSound.play();
                 this.buttonSequence.add(2);
             }
             else {
+                this.buttonSound.play();
                 this.buttonSequence.delete(2);
             }
         }
         else if (botao == 3) {
             this.buttonState[2] = !this.buttonState[2];
             if (this.buttonState[2] == true) {
+                this.buttonSound.play();
                 this.buttonSequence.add(3);
             }
             else {
+                this.buttonSound.play();
                 this.buttonSequence.delete(3);
             }
         }
         else if (botao == 4) {
             this.buttonState[3] = !this.buttonState[3];
             if (this.buttonState[3] == true) {
+                this.buttonSound.play();
                 this.buttonSequence.add(4);
             }
             else {
+                this.buttonSound.play();
                 this.buttonSequence.delete(4);
             }
         }
         else if (botao == 5) {
             this.buttonState[4] = !this.buttonState[4];
             if (this.buttonState[4] == true) {
+                this.buttonSound.play();
                 this.buttonSequence.add(5);
             }
             else {
+                this.buttonSound.play();
                 this.buttonSequence.delete(5);
             }
         }
         else if (botao == 6) {
             this.buttonState[5] = !this.buttonState[5];
             if (this.buttonState[5] == true) {
+                this.buttonSound.play();
                 this.buttonSequence.add(6);
             }
             else {
+                this.buttonSound.play();
                 this.buttonSequence.delete(6);
             }
         }
@@ -562,9 +656,18 @@ export default class LevelOne extends Phaser.Scene {
     messages() {
         const playerLocation = { x: this.player.x, y: this.player.y };
         const buttonsLocation = this.buttonsPosition;
+        if (Math.abs(playerLocation.x - buttonsLocation[6].x) > 20 || Math.abs(playerLocation.y - buttonsLocation[6].y) > 20) {
+            this.nota.setVisible(false);
+        }
         if (Math.abs(playerLocation.x - buttonsLocation[2].x) <= 60 && Math.abs(playerLocation.y - buttonsLocation[2].y) <= 60 && this.answer == false) {
             this.msgState = 2;
             this.msgDesvende.setVisible(false);
+            this.nota.setVisible(false);
+        }
+        else if (Math.abs(playerLocation.x - buttonsLocation[6].x) <= 20 && Math.abs(playerLocation.y - buttonsLocation[6].y) <= 20) {
+            this.msgState = 5;
+            this.msgDesvende.setVisible(false);
+            this.msgPressionar.setVisible(false);
         }
         else if (this.answer == false) {
             this.msgState = 1;
@@ -586,12 +689,58 @@ export default class LevelOne extends Phaser.Scene {
         }
     }
 
+    updateMonsterSound(monsters) {
+        const player = this.player;
+        let nearestMonsterDistance = Infinity; // Start with a very large distance
+        let nearestMonster = null;
+    
+        // Find the nearest monster to the player
+        for (const monster of monsters) {
+            console.log(monster);
+            monster.update();
+            const distance = Phaser.Math.Distance.Between(monster.x, monster.y, player.x, player.y);
+            if (distance < nearestMonsterDistance) {
+                nearestMonsterDistance = distance;
+                nearestMonster = monster;
+            }
+        }
+    
+        // Adjust volume based on the distance to the nearest monster
+        function mapDistanceToVolume(distance) {
+            const maxDistance = 200; // Maximum distance for full volume
+            const minDistance = 0;   // Minimum distance for lowest volume
+            const maxVolume = 1;     // Maximum volume level (full volume)
+            const minVolume = 0;     // Minimum volume level (lowest volume)
+        
+            // Calculate the percentage of distance between minDistance and maxDistance
+            const distancePercentage = Phaser.Math.Percent(minDistance, maxDistance, distance);
+        
+            // Map the distancePercentage to the volume range
+            const volume = Phaser.Math.Linear(0, 100, distancePercentage, maxVolume, minVolume);
+        
+            return Phaser.Math.Clamp(volume, minVolume, maxVolume);
+        }
+    
+        // If there is a nearest monster, adjust the volume based on its distance
+        if (nearestMonster) {
+            const volume = mapDistanceToVolume(nearestMonsterDistance);
+            this.entitySound.setVolume(volume);
+        } else {
+            // If no monsters are present, set volume to 0
+            this.entitySound.setVolume(0);
+        }
+    }
+
     updateMonsterChase(monster) {
         const speed = 50; // Velocidade do monstro (pixels por segundo)
         const player = this.player;
         const distance = Phaser.Math.Distance.Between(monster.x, monster.y, player.x, player.y);
+
+        if (distance < 20 && this.dead == false) {
+            this.handleMonsterCollision();
+        }
       
-        if (distance < 200) {
+        else if (distance < 200) {
           // Obtenha as coordenadas do jogador e do monstro no formato de grade
           const playerGridPos = this.worldLayer.worldToTileXY(player.x, player.y);
           const monsterGridPos = this.worldLayer.worldToTileXY(monster.x, monster.y);
@@ -786,8 +935,14 @@ export default class LevelOne extends Phaser.Scene {
         const playerLocation = { x: this.player.x, y: this.player.y };
         const exitLocation = { x: 80 * TILESIZE, y: 7 * TILESIZE };
 
-        if (Math.abs(playerLocation.x - exitLocation.x) <= 30 && Math.abs(playerLocation.y - exitLocation.y) <= 30 && this.hasKey) {
+        if (Math.abs(playerLocation.x - exitLocation.x) <= 100 && Math.abs(playerLocation.y - exitLocation.y) <= 100 && this.hasKey) {
             this.next = true;
+            this.ambienceSound.stop();
+            this.entitySound.stop();
+            this.keySound.stop();
+            this.paperSound.stop();
+            this.buttonSound.stop();
+            this.soundtrack.stop();
             // Inicia a próxima cena após um tempo de espera
             setTimeout(() => {
                 this.scene.start('TextScene', { text: 'Level 2 Text !', nextScene: 'LevelTwo' });
