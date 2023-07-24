@@ -87,7 +87,7 @@ export default class LevelZero extends Phaser.Scene {
         this.player.body.setSize(10, 16);
 
         // Add player physics
-        //this.physics.add.collider(this.player, [worldLayer, decorationLayer]); remover
+        this.physics.add.collider(this.player, [worldLayer, decorationLayer]);
         this.player.createFogOfWar(this, 'vision', 0.5, 0.7)
 
         // Add monsters of the map
@@ -129,7 +129,7 @@ export default class LevelZero extends Phaser.Scene {
         // Update player movement
         this.player.updateFogOfWar()
         if (this.player.body.enable)
-            this.player.update(this.cursors, 200); // remover
+            this.player.update(this.cursors, 80);
 
         this.updateMonsterMovement(moveMonster);
     }
@@ -166,7 +166,6 @@ export default class LevelZero extends Phaser.Scene {
     }
 
     handleMonsterCollision() {
-        return; // remover
         this.player.disableInteractive();
         this.player.body.enable = false; // Disable player physics
         this.player.setTint(0xff0000); // Set player tint to red

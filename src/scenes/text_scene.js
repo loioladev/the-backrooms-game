@@ -62,7 +62,7 @@ export default class TextScene extends Phaser.Scene {
         this.textObject = this.add.text(0, 0, '', textConfig);
         this.textObject.setVisible(true);
 
-        // Devemos receber data.playerInfo {player, totalTime, lastTime}
+        // Devemos receber data.playerInfo {name, lastTime, totalTime, map}
         if (data.playerInfo.totalTime > 0) {
             // Salvar jogador no BD
             const ans = await postSpeedrun({
