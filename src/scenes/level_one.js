@@ -207,17 +207,26 @@ export default class LevelOne extends Phaser.Scene {
         const spawnPointMonster5 = map.findObject("Monsters", obj => obj.name === "monster5");
         const spawnPointMonster6 = map.findObject("Monsters", obj => obj.name === "monster6");
 
-        this.monster1 = new MonsterOne(this, spawnPointMonster1.x, spawnPointMonster1.y, 'lantern-level-one', lanternConfig);
+        const lanternAnimKey = MonsterOne.createAnimation(this, 'lantern-level-one', lanternConfig, 'lantern');
+        const devourAnimKey = MonsterOne.createAnimation(this, 'devour-level-one', devourConfig, 'devour');
+
+        // Create monsters and configure animations
+        this.monster1 = new MonsterOne(this, spawnPointMonster1.x, spawnPointMonster1.y, 'lantern-level-one', lanternAnimKey);
         this.monster1.setSize(10, 16);
-        this.monster2 = new MonsterOne(this, spawnPointMonster2.x, spawnPointMonster2.y, 'lantern-level-one', lanternConfig);
+
+        this.monster2 = new MonsterOne(this, spawnPointMonster2.x, spawnPointMonster2.y, 'lantern-level-one', lanternAnimKey);
         this.monster2.setSize(10, 16);
-        this.monster6 = new MonsterOne(this, spawnPointMonster6.x, spawnPointMonster6.y, 'lantern-level-one', lanternConfig);
+
+        this.monster6 = new MonsterOne(this, spawnPointMonster6.x, spawnPointMonster6.y, 'lantern-level-one', lanternAnimKey);
         this.monster6.setSize(10, 16);
-        this.monster3 = new MonsterOne(this, spawnPointMonster3.x, spawnPointMonster3.y, 'devour-level-one', devourConfig);
+
+        this.monster3 = new MonsterOne(this, spawnPointMonster3.x, spawnPointMonster3.y, 'devour-level-one', devourAnimKey);
         this.monster3.setSize(10, 16);
-        this.monster4 = new MonsterOne(this, spawnPointMonster4.x, spawnPointMonster4.y, 'devour-level-one', devourConfig);
+
+        this.monster4 = new MonsterOne(this, spawnPointMonster4.x, spawnPointMonster4.y, 'devour-level-one', devourAnimKey);
         this.monster4.setSize(10, 16);
-        this.monster5 = new MonsterOne(this, spawnPointMonster5.x, spawnPointMonster5.y, 'devour-level-one', devourConfig);
+
+        this.monster5 = new MonsterOne(this, spawnPointMonster5.x, spawnPointMonster5.y, 'devour-level-one', devourAnimKey);
         this.monster5.setSize(10, 16);
 
         var allMonsters = this.physics.add.group();
@@ -696,8 +705,6 @@ export default class LevelOne extends Phaser.Scene {
     
         // Find the nearest monster to the player
         for (const monster of monsters) {
-            console.log(monster);
-            monster.update();
             const distance = Phaser.Math.Distance.Between(monster.x, monster.y, player.x, player.y);
             if (distance < nearestMonsterDistance) {
                 nearestMonsterDistance = distance;
@@ -735,65 +742,91 @@ export default class LevelOne extends Phaser.Scene {
         const speed = 50; // Velocidade do monstro (pixels por segundo)
         const player = this.player;
         const distance = Phaser.Math.Distance.Between(monster.x, monster.y, player.x, player.y);
-
+    
         if (distance < 20 && this.dead == false) {
             this.handleMonsterCollision();
-        }
-      
-        else if (distance < 200) {
-          // Obtenha as coordenadas do jogador e do monstro no formato de grade
-          const playerGridPos = this.worldLayer.worldToTileXY(player.x, player.y);
-          const monsterGridPos = this.worldLayer.worldToTileXY(monster.x, monster.y);
-      
-          // Execute o algoritmo A* para encontrar o caminho até o jogador, desviando da camada "wallLayer"
-          const path = this.findPath(monsterGridPos, playerGridPos);
-      
-          if (path && path.length > 1) {
-            // Obtenha a próxima posição no caminho
-            const nextGridPos = path[1];
-      
-            // Verifique se a próxima posição está dentro da camada "wallLayer"
-            const tile = this.wallLayer.getTileAt(nextGridPos.x, nextGridPos.y);
-      
-            if (tile) {
-              // Calcule o ângulo para desviar da parede
-              const wallAngle = Phaser.Math.Angle.Between(monster.x, monster.y, tile.getCenterX(), tile.getCenterY());
-              const targetAngle = wallAngle + Math.PI;
-      
-              // Calcule a direção perpendicular ao ângulo de desvio
-              const perpendicularAngle = targetAngle + Math.PI / 2;
-      
-              // Calcule o desvio para evitar a parede
-              const wallOffset = 16; // Ajuste o valor conforme necessário para evitar a parede corretamente
-      
-              const offsetX = Math.cos(perpendicularAngle) * wallOffset;
-              const offsetY = Math.sin(perpendicularAngle) * wallOffset;
-      
-              // Atualize a direção do monstro para desviar da parede
-              const velocityX = Math.cos(targetAngle) * speed;
-              const velocityY = Math.sin(targetAngle) * speed;
-              monster.body.setVelocity(velocityX, velocityY);
-      
-              // Ajuste a posição do monstro sem modificar diretamente as coordenadas x e y
-              monster.body.x += offsetX;
-              monster.body.y += offsetY;
+        } else if (distance < 200) {
+            // Obtenha as coordenadas do jogador e do monstro no formato de grade
+            const playerGridPos = this.worldLayer.worldToTileXY(player.x, player.y);
+            const monsterGridPos = this.worldLayer.worldToTileXY(monster.x, monster.y);
+    
+            // Execute o algoritmo A* para encontrar o caminho até o jogador, desviando da camada "wallLayer"
+            const path = this.findPath(monsterGridPos, playerGridPos);
+    
+            if (path && path.length > 1) {
+                // Obtenha a próxima posição no caminho
+                const nextGridPos = path[1];
+    
+                // Verifique se a próxima posição está dentro da camada "wallLayer"
+                const tile = this.wallLayer.getTileAt(nextGridPos.x, nextGridPos.y);
+    
+                if (tile) {
+                    // Calcule o ângulo para desviar da parede
+                    const wallAngle = Phaser.Math.Angle.Between(monster.x, monster.y, tile.getCenterX(), tile.getCenterY());
+                    const targetAngle = wallAngle + Math.PI;
+    
+                    // Calcule a direção perpendicular ao ângulo de desvio
+                    const perpendicularAngle = targetAngle + Math.PI / 2;
+    
+                    // Calcule o desvio para evitar a parede
+                    const wallOffset = 16; // Ajuste o valor conforme necessário para evitar a parede corretamente
+    
+                    const offsetX = Math.cos(perpendicularAngle) * wallOffset;
+                    const offsetY = Math.sin(perpendicularAngle) * wallOffset;
+    
+                    // Atualize a direção do monstro para desviar da parede
+                    const velocityX = Math.cos(targetAngle) * speed;
+                    const velocityY = Math.sin(targetAngle) * speed;
+                    monster.body.setVelocity(velocityX, velocityY);
+    
+                    // Ajuste a posição do monstro sem modificar diretamente as coordenadas x e y
+                    monster.body.x += offsetX;
+                    monster.body.y += offsetY;
+    
+                    // Verifique a direção do monstro e reproduza a animação correta
+                    const angleToNextPos = Phaser.Math.Angle.Between(monster.x, monster.y, nextGridPos.x * TILESIZE, nextGridPos.y * TILESIZE);
+                    const angleDiff = Phaser.Math.Angle.Wrap(angleToNextPos - monster.body.rotation);
+    
+                    if (angleDiff >= -Math.PI / 4 && angleDiff < Math.PI / 4) {
+                        monster.playAnimation('right');
+                    } else if (angleDiff >= Math.PI / 4 && angleDiff < (3 * Math.PI) / 4) {
+                        monster.playAnimation('down');
+                    } else if (angleDiff >= -(3 * Math.PI) / 4 && angleDiff < -Math.PI / 4) {
+                        monster.playAnimation('up');
+                    } else {
+                        monster.playAnimation('left');
+                    }
+                } else {
+                    // Converta a posição da grade em coordenadas do mundo
+                    const nextWorldPos = this.worldLayer.tileToWorldXY(nextGridPos.x, nextGridPos.y);
+    
+                    // Calcule o ângulo em direção à próxima posição
+                    const angleToNextPos = Phaser.Math.Angle.Between(monster.x, monster.y, nextWorldPos.x, nextWorldPos.y);
+    
+                    // Atualize a direção do monstro para seguir em direção à próxima posição
+                    monster.body.setVelocity(Math.cos(angleToNextPos) * speed, Math.sin(angleToNextPos) * speed);
+    
+                    // Verifique a direção do monstro e reproduza a animação correta
+                    const angleDiff = Phaser.Math.Angle.Wrap(angleToNextPos - monster.body.rotation);
+    
+                    if (angleDiff >= -Math.PI / 4 && angleDiff < Math.PI / 4) {
+                        monster.playAnimation('right');
+                    } else if (angleDiff >= Math.PI / 4 && angleDiff < (3 * Math.PI) / 4) {
+                        monster.playAnimation('down');
+                    } else if (angleDiff >= -(3 * Math.PI) / 4 && angleDiff < -Math.PI / 4) {
+                        monster.playAnimation('up');
+                    } else {
+                        monster.playAnimation('left');
+                    }
+                }
             } else {
-              // Converta a posição da grade em coordenadas do mundo
-              const nextWorldPos = this.worldLayer.tileToWorldXY(nextGridPos.x, nextGridPos.y);
-      
-              // Calcule o ângulo em direção à próxima posição
-              const angleToNextPos = Phaser.Math.Angle.Between(monster.x, monster.y, nextWorldPos.x, nextWorldPos.y);
-      
-              // Atualize a direção do monstro para seguir em direção à próxima posição
-              monster.body.setVelocity(Math.cos(angleToNextPos) * speed, Math.sin(angleToNextPos) * speed);
+                // O monstro chegou ao destino ou não há caminho disponível
+                monster.body.setVelocity(0, 0);
             }
-          } else {
-            // O monstro chegou ao destino ou não há caminho disponível
-            monster.body.setVelocity(0, 0);
-          }
         } else {
-          // O jogador está longe demais, o monstro para de perseguir
-          monster.body.setVelocity(0, 0);
+            // O jogador está longe demais, o monstro para de perseguir
+            monster.body.setVelocity(0, 0);
+            monster.playAnimation('idle');
         }
     }
 
