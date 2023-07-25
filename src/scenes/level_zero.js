@@ -1,7 +1,21 @@
 import Player from '../entities/player.js';
 import Monster from '../entities/monster.js';
 
+const deathMessages = [
+    "Você foi devorado pelo monstro!\nTenha mais cuidado da próxima vez.",
+    "O monstro te encontrou e acabou com você.\nBoa sorte na próxima.",
+    "A escuridão te engoliu, você não resistiu.\nTente novamente.",
+    "Você não conseguiu escapar do monstro.\nBoa sorte na próxima.",
+    "O monstro te pegou, não houve escapatória.\nTente novamente.",
+    "O monstro se aproximou silenciosamente e atacou.\nTenha mais cuidado da próxima vez.",
+    "O terror das sombras te levou para sempre.\nTente novamente.",
+    "Você foi vítima das criaturas das trevas.\nTenha mais cuidado da próxima vez.",
+    "O monstro estava à espreita e te pegou desprevenido.\nBoa sorte na próxima.",
+    "Os olhos brilhantes do monstro foram a última coisa que viu.\nTenha mais cuidado da próxima vez.",
+    "Sua luz se apagou nas garras do monstro.\nTente novamente.",
+];
 const TILESIZE = 16;
+
 
 export default class LevelZero extends Phaser.Scene {
     constructor() {
@@ -25,6 +39,7 @@ export default class LevelZero extends Phaser.Scene {
 
         this.load.audio('level0_music', 'assets/sounds/level0_music.mp3');
         this.load.audio('walker_sound', 'assets/sounds/walker.mp3');
+        this.load.audio('scream', 'assets/sounds/scream_sound_effect.mp3');
 
     }
 
@@ -37,6 +52,7 @@ export default class LevelZero extends Phaser.Scene {
 
         this.themeSong = this.sound.add('level0_music', { volume: 0.1, loop: true });
         this.walkerSound = this.sound.add('walker_sound', { volume: 0.0, loop: true });
+        this.scream = this.sound.add('scream', { volume: 0.2, loop: false });
         this.themeSong.play();
         this.walkerSound.play();
 
@@ -109,11 +125,16 @@ export default class LevelZero extends Phaser.Scene {
 
         // Add player movement
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.end = false;
+        this.dead = false;
     }
 
     update() {
         // verify if player is in the door
-        this.endingDoor()
+        if (!this.end){
+            this.endingDoor()
+        }
 
         // show notes for player
         let moveMonster = this.showNotes()
@@ -166,18 +187,21 @@ export default class LevelZero extends Phaser.Scene {
     }
 
     handleMonsterCollision() {
-        this.player.disableInteractive();
-        this.player.body.enable = false; // Disable player physics
-        this.player.setTint(0xff0000); // Set player tint to red
-        this.player.anims.play(this.player.idle, true); // Play player idle animation
-
-        this.themeSong.stop();
-        this.walkerSound.stop();
-
-        this.cameras.main.fadeOut(2000);
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start('TextScene', { text: 'Você morreu. Tente novamente.', nextScene: 'LevelZero', timeText: 3000, playerInfo: this.playerInfo });
-        });
+        if (!this.dead) {
+            this.scream.play();
+            this.player.disableInteractive();
+            this.player.body.enable = false; // Disable player physics
+            this.player.setTint(0xff0000); // Set player tint to red
+            this.player.anims.play(this.player.idle, true); // Play player idle animation
+            this.dead = true;
+            this.themeSong.stop();
+            this.walkerSound.stop();
+            const randomDeathMessage = Phaser.Math.RND.pick(deathMessages);
+            this.cameras.main.fadeOut(2000);
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.scene.start('TextScene', { text: randomDeathMessage, nextScene: 'LevelZero', timeText: 3000, playerInfo: this.playerInfo });
+            });
+        }
     }
 
     showNotes() {
@@ -214,7 +238,6 @@ export default class LevelZero extends Phaser.Scene {
         if (!this.hasCard) {
             return;
         }
-
         for (var i = 0; i < doorLocation.length; i++) {
             if (Math.abs(playerLocation.x - doorLocation[i].x) <= 16 && Math.abs(playerLocation.y - doorLocation[i].y) <= 16) {
                 // Atualizar jogador no banco de dados
@@ -226,7 +249,7 @@ export default class LevelZero extends Phaser.Scene {
 
                 this.themeSong.stop();
                 this.walkerSound.stop();
-              
+                this.end = true;
                 this.cameras.main.fadeOut(2000);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
                     this.scene.start('TextScene', { text: 'Descubra o enigma enquanto houver luz.\nNa escuridão, CORRA !', nextScene: 'LevelOne' , playerInfo: playerInfo});

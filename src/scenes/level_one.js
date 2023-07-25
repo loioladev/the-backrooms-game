@@ -2,7 +2,7 @@ import PlayerOne from '../entities/player_level_one.js';
 import MonsterOne from '../entities/monster_level_one.js';
 
 /*
-1 - Arrumar sprite monstros
+1 - Arrumar sprite monstros -Done
 2 - Arrumar quadro -Done
 3 - Nota com dicas -Done
 4 - Vê um tempo ideal -Done
@@ -42,6 +42,20 @@ const lanternConfig = {
     downEndFrame: 17,
 };
 
+const deathMessages = [
+    "Você foi devorado pelo monstro!\nTenha mais cuidado da próxima vez.",
+    "O monstro te encontrou e acabou com você.\nBoa sorte na próxima.",
+    "A escuridão te engoliu, você não resistiu.\nTente novamente.",
+    "Você não conseguiu escapar do monstro.\nBoa sorte na próxima.",
+    "O monstro te pegou, não houve escapatória.\nTente novamente.",
+    "O monstro se aproximou silenciosamente e atacou.\nTenha mais cuidado da próxima vez.",
+    "O terror das sombras te levou para sempre.\nTente novamente.",
+    "Você foi vítima das criaturas das trevas.\nTenha mais cuidado da próxima vez.",
+    "O monstro estava à espreita e te pegou desprevenido.\nBoa sorte na próxima.",
+    "Os olhos brilhantes do monstro foram a última coisa que viu.\nTenha mais cuidado da próxima vez.",
+    "Sua luz se apagou nas garras do monstro.\nTente novamente.",
+];
+
 const TILESIZE = 16;
 
 export default class LevelOne extends Phaser.Scene {
@@ -76,9 +90,14 @@ export default class LevelOne extends Phaser.Scene {
         this.load.audio('paper_sound', 'assets/sounds/paper_sound.mp3')
         this.load.audio('button_sound', 'assets/sounds/pressing-a-button.mp3')
         this.load.audio('soundtrack', 'assets/sounds/level1_soundtrack.mp3')
+        this.load.audio('heart_beat', 'assets/sounds/heart_beat_sound_effect.mp3')
+        this.load.audio('scream', 'assets/sounds/scream_sound_effect.mp3')
     }
 
-    create() {
+    create(data) {
+        this.startTime = this.time.now / 1000;
+        this.playerInfo = data.playerInfo;
+
         this.msgDesvende = this.add.image(0, 0, 'desvende');
         this.msgSala = this.add.image(0, 0, 'sala');
         this.msgSaida = this.add.image(0, 0, 'saida');
@@ -268,9 +287,12 @@ export default class LevelOne extends Phaser.Scene {
         this.keySound = this.sound.add('chave_sound', { volume: 0.3, loop: false });
         this.paperSound = this.sound.add('paper_sound', { volume: 0.3, loop: false });
         this.buttonSound = this.sound.add('button_sound', { volume: 0.3, loop: false });
+        this.heartBeat = this.sound.add('heart_beat', { volume: 0.0, loop: true });
+        this.scream = this.sound.add('scream', { volume: 0.2, loop: false });
         this.ambienceSound.play();
         this.soundtrack.play();
         this.entitySound.play();
+        this.heartBeat.play();
 
         // Variáveis de controle
         this.lightMaskActive = false; // Inicialmente a máscara de luz está desativada
@@ -387,6 +409,7 @@ export default class LevelOne extends Phaser.Scene {
                 this.player.setSkin(true);
                 this.bool_skin = false;
             }
+            this.heartBeat.setVolume(0.2);
             this.updateMonsterChase(this.monster1);
             this.updateMonsterChase(this.monster2);
             this.updateMonsterChase(this.monster3);
@@ -428,6 +451,7 @@ export default class LevelOne extends Phaser.Scene {
                 this.monster6.setVisible(false);
                 this.physics.world.disable(this.monster6); // Desativa a física do monstro
             }
+            this.heartBeat.setVolume(0.0);
             this.entitySound.setVolume(0.0);
             this.player.hideFogOfWar();
             if (this.bool_skin == false) {
@@ -467,20 +491,24 @@ export default class LevelOne extends Phaser.Scene {
 
     handleMonsterCollision() {
         this.dead = true;
+        this.scream.play();
         this.ambienceSound.stop();
         this.entitySound.stop();
         this.keySound.stop();
         this.paperSound.stop();
         this.buttonSound.stop();
         this.soundtrack.stop();
+        this.heartBeat.stop();
         this.player.disableInteractive();
         this.player.body.enable = false; // Disable player physics
         this.player.setTint(0xff0000); // Set player tint to red
         this.player.anims.play(this.player.idle, true); // Play player idle animation
 
+        const randomDeathMessage = Phaser.Math.RND.pick(deathMessages);
+
         this.cameras.main.fadeOut(2000);
         this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start('TextScene', { text: 'Você morreu. Tente novamente.', nextScene: 'LevelOne' });
+            this.scene.start('TextScene', { text: randomDeathMessage, nextScene: 'LevelOne', timeText: 3000 ,playerInfo: this.playerInfo});
         });
     }
 
@@ -974,11 +1002,19 @@ export default class LevelOne extends Phaser.Scene {
             this.entitySound.stop();
             this.keySound.stop();
             this.paperSound.stop();
+            this.scream.stop();
+            this.heartBeat.stop();
             this.buttonSound.stop();
             this.soundtrack.stop();
             // Inicia a próxima cena após um tempo de espera
+            // Atualizar jogador no banco de dados
+            let timePassed = (this.time.now / 1000) - this.startTime;
+            let playerInfo = this.playerInfo;
+            playerInfo.totalTime += timePassed;
+            playerInfo.lastTime = timePassed;
+            playerInfo.map = 'level1';
             setTimeout(() => {
-                this.scene.start('TextScene', { text: 'Level 2 Text !', nextScene: 'LevelTwo' });
+                this.scene.start('TextScene', { text: 'Level 2 Text !', nextScene: 'LevelTwo', playerInfo: playerInfo});
             }, 2000);
         }
     }
