@@ -20,13 +20,18 @@ export default class LastLevel extends Phaser.Scene {
         this.load.spritesheet('meatball', 'assets/sprites/meatball.png', {frameWidth: 16, frameHeight: 16})
         this.load.spritesheet('partygoer', 'assets/sprites/partygoer.png', {frameWidth: 32, frameHeight: 32})
         this.load.spritesheet('smile', 'assets/sprites/smile.png', {frameWidth: 16, frameHeight: 16})
-
+        this.load.audio('last_level_music', 'assets/sounds/last_level_music.mp3');
 
     }
 
-    create() {
+    create(data) {
+
+        this.startTime = this.time.now / 1000;
+        this.playerInfo = data.playerInfo;
+
         this.cameras.main.setBackgroundColor('#000000');
         this.cameras.main.fadeIn(2000);
+
         const map = this.make.tilemap({key: 'map-level-last'})
         const tileset = map.addTilesetImage('last_map', 'tiles-level-last')
         const worldLayer = map.createLayer('World', tileset, 0, 0)
@@ -36,6 +41,9 @@ export default class LastLevel extends Phaser.Scene {
         const upOthers = map.createLayer('UpOthers', tileset, 0, 0);
         this.player_speed = 80;
         this.monster_speed = 77.5;
+
+        this.themeSong = this.sound.add('last_level_music', {volume: 0.1, loop: true});
+        this.themeSong.play();
 
         worldLayer.setCollisionByProperty({collider: true});
         belowLayer.setCollisionByProperty({collider: true});
@@ -108,13 +116,19 @@ export default class LastLevel extends Phaser.Scene {
 
     handleMonsterCollision() {
         this.player.disableInteractive();
-        this.player.body.enable = false; // Disable player physics
-        this.player.setTint(0xff0000); // Set player tint to red
-        this.player.anims.play(this.player.idle, true); // Play player idle animation
+        this.player.body.enable = false;
+        this.player.setTint(0xff0000);
+        this.player.anims.play(this.player.idle, true);
 
+        this.themeSong.stop();
+        this.walkerSound.stop();
         this.cameras.main.fadeOut(2000);
         this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start('TextScene', {text: 'Você morreu. Tente novamente.', nextScene: 'LastLevel'});
+            this.scene.start('TextScene', {
+                text: 'Você morreu. Tente novamente.',
+                nextScene: 'LastLevel',
+                playerInfo: this.playerInfo
+            });
         });
     }
 
@@ -132,11 +146,24 @@ export default class LastLevel extends Phaser.Scene {
         const byPassMap = () => {
             for (var i = 0; i < doorLocation.length; i++) {
                 if (Math.abs(playerLocation.x - doorLocation[i].x) <= 30 && Math.abs(playerLocation.y - doorLocation[i].y) <= 30) {
+
+                    // Atualizar jogador no banco de dados
+                    let timePassed = (this.time.now / 1000) - this.startTime;
+                    let playerInfo = this.playerInfo;
+                    playerInfo.totalTime += timePassed;
+                    playerInfo.lastTime = timePassed;
+                    playerInfo.map = 'last_level'
+
                     this.monster_speed = 20;
                     this.player_speed = 25;
+                    this.themeSong.stop();
                     this.cameras.main.fadeOut(2000);
                     this.cameras.main.once('camerafadeoutcomplete', () => {
-                        this.scene.start('TextScene');
+                        this.scene.start('TextScene', {
+                            text: 'Parabéns, você conseguiu escapar dos backroons',
+                            nextScene: 'Frontrooms',
+                            playerInfo: playerInfo
+                        });
                     });
                 }
             }
