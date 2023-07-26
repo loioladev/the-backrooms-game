@@ -7,13 +7,14 @@ const cors = require('cors');
 const PORT = 3000;
 const URI = process.env['MONGODB']
 
+
 const app = express();
 app.use(bodyParser.json());
 app.use(rankingRoute);
-app.use(cors({
-  origin: 'https://backroomsgame.matheusloiola1.repl.co',
-  credentials: true
-}));
+//app.use(cors({
+//  origin: 'https://backroomsgame.matheusloiola1.repl.co',
+//  credentials: true
+//}));
 
 mongoose
   .connect(URI)
