@@ -18,7 +18,8 @@ const TILESIZE = 16;
 
 export default class LevelTwo extends Phaser.Scene {
     constructor() {
-        super('LevelTwo')
+        super('LevelTwo');
+        this.timeMovement = 0;
     }
 
     preload() {
