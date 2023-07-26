@@ -184,7 +184,7 @@ export default class LevelOne extends Phaser.Scene {
             { x: 43 * TILESIZE, y: 50 * TILESIZE },
             { x: 44 * TILESIZE, y: 50 * TILESIZE },
             { x: 45 * TILESIZE, y: 50 * TILESIZE },
-            { x: 35 * TILESIZE, y: 30 * TILESIZE} // Nota Position
+            { x: 39 * TILESIZE, y: 31 * TILESIZE} // Nota Position
         ]
 
         // Create the player with physics
@@ -409,7 +409,7 @@ export default class LevelOne extends Phaser.Scene {
                 this.player.setSkin(true);
                 this.bool_skin = false;
             }
-            this.heartBeat.setVolume(0.2);
+            this.heartBeat.setVolume(0.4);
             this.updateMonsterChase(this.monster1);
             this.updateMonsterChase(this.monster2);
             this.updateMonsterChase(this.monster3);
@@ -771,7 +771,7 @@ export default class LevelOne extends Phaser.Scene {
         const player = this.player;
         const distance = Phaser.Math.Distance.Between(monster.x, monster.y, player.x, player.y);
     
-        if (distance < 20 && this.dead == false) {
+        if (distance < 25 && this.dead == false) {
             this.handleMonsterCollision();
         } else if (distance < 200) {
             // Obtenha as coordenadas do jogador e do monstro no formato de grade
