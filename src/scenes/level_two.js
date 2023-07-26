@@ -154,13 +154,13 @@ export default class LevelTwo extends Phaser.Scene {
             const randomDeathMessage = Phaser.Math.RND.pick(deathMessages);
             this.cameras.main.fadeOut(2000);
             this.cameras.main.once('camerafadeoutcomplete', () => {
-                this.scene.start('TextScene', { text: randomDeathMessage, nextScene: 'LevelZero', timeText: 3000, playerInfo: this.playerInfo });
+                this.scene.start('TextScene', { text: randomDeathMessage, nextScene: 'LevelTwo', timeText: 3000, playerInfo: this.playerInfo });
             });
         }
     }
 
     endingDoor() {
-        const doorLocation = [{ x: 150 * TILESIZE, y: 75 * TILESIZE }];
+        const doorLocation = [{ x: 2405, y: 1210 }];
         const playerLocation = { x: this.player.x, y: this.player.y };
 
         if (!this.hasCard) {
@@ -180,7 +180,7 @@ export default class LevelTwo extends Phaser.Scene {
                 this.end = true;
                 this.cameras.main.fadeOut(2000);
                 this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.scene.start('TextScene', { text: 'Último nível', nextScene: 'LastLevel' , playerInfo: playerInfo});
+                    this.scene.start('TextScene', { text: '...', nextScene: 'LastLevel' , playerInfo: playerInfo});
                 });
             }
         }
