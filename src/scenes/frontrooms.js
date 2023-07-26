@@ -58,7 +58,7 @@ export default class Frontrooms extends Phaser.Scene {
                     name: prompt("Digite seu nick (nicks já existentes não serão aceitos para o score):"),
                     totalTime: 0,
                     lastTime: 0,
-                    map: 'start'
+                    map: 'LevelZero'
                 }
                 this.themeSong.stop()
                 this.tweens.add({

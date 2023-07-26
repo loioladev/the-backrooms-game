@@ -1,0 +1,16 @@
+Integrantes do grupo:
+
+- Matheus Loiola Pinto Curado Silva
+- Eduardo Amorim
+- Matheus Fernandes Bezerra
+
+Como rodar:
+
+Para rodar o jogo, entre no replit do backend e deixe-o aberto rodando. Após isso, basta entrar no replit do jogo e aproveitar!
+
+Links:
+
+- Link para o Github: https://github.com/loioladev/the-backrooms-game
+- Link para jogo: https://replit.com/@MatheusLoiola1/BackroomsGame
+- Link para Backend: https://replit.com/@MatheusLoiola1/BackroomsBackend
+- Link para o vídeo no youtube: https://www.youtube.com/watch?v=SFBsXLY2xBM

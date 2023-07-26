@@ -46,6 +46,7 @@ export default class LevelZero extends Phaser.Scene {
     create(data) {
         this.startTime = this.time.now / 1000;
         this.playerInfo = data.playerInfo;
+        this.playerInfo.map = 'LevelZero';
 
         this.cameras.main.setBackgroundColor('#000000');
         this.cameras.main.fadeIn(2000);
@@ -245,7 +246,7 @@ export default class LevelZero extends Phaser.Scene {
                 let playerInfo = this.playerInfo;
                 playerInfo.totalTime += timePassed;
                 playerInfo.lastTime = timePassed;
-                playerInfo.map = 'level0'
+                playerInfo.map = 'LevelZero'
 
                 this.themeSong.stop();
                 this.walkerSound.stop();
