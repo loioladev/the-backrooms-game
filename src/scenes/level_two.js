@@ -165,9 +165,6 @@ export default class LevelTwo extends Phaser.Scene {
         const doorLocation = [{ x: 2405, y: 1210 }];
         const playerLocation = { x: this.player.x, y: this.player.y };
 
-        if (!this.hasCard) {
-            return;
-        }
         for (var i = 0; i < doorLocation.length; i++) {
             if (Math.abs(playerLocation.x - doorLocation[i].x) <= 16 && Math.abs(playerLocation.y - doorLocation[i].y) <= 16) {
                 // Atualizar jogador no banco de dados
