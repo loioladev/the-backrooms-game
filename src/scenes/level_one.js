@@ -1014,7 +1014,7 @@ export default class LevelOne extends Phaser.Scene {
             playerInfo.lastTime = timePassed;
             playerInfo.map = 'level1';
             setTimeout(() => {
-                this.scene.start('TextScene', { text: 'Level 2 Text !', nextScene: 'LevelTwo', playerInfo: playerInfo});
+                this.scene.start('TextScene', { text: 'Corra pela sua vida!', nextScene: 'LastLevel', playerInfo: playerInfo});
             }, 2000);
         }
     }
