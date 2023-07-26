@@ -88,6 +88,7 @@ export default class LevelTwo extends Phaser.Scene {
         spawnPoints.forEach((sp, _) => {
             const monster = new Monster(this, sp.x, sp.y, 'walker');
             monster.setSize(10, 16);
+            monster.setDepth(4);
             this.allMonsters.add(monster);
         });
         this.physics.add.collider(this.player, this.allMonsters, this.handleMonsterCollision, null, this);
