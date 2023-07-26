@@ -13,17 +13,20 @@ async function getRanking(map) {
 
 
 async function postSpeedrun(obj) {
+    console.log(obj);
     try {
         const result = await axios.get(api + 'player/' + obj.player);
-        data.forEach(item => {
+        result?.data.forEach(item => {
             if (item.map == obj.map) {
                 return false;
             }
         });
     }
     catch (error) {
+        console.log('error!!!', error);
         return false;;
     }
+    console.log('player not found');
     try {
         await axios.post(api, obj);
         return true;
@@ -34,6 +37,14 @@ async function postSpeedrun(obj) {
     }
 }
 
+function autoReload() {
+  const reloadTime = 20000;
+
+  // Configura o temporizador para recarregar após o tempo especificado
+  setTimeout(() => {
+    location.reload(true);
+  }, reloadTime);
+}
 
 export default class TextScene extends Phaser.Scene {
     constructor() {
@@ -63,7 +74,8 @@ export default class TextScene extends Phaser.Scene {
         this.textObject.setVisible(true);
 
         // Devemos receber data.playerInfo {name, lastTime, totalTime, map}
-        if (data.playerInfo.totalTime > 0) {
+
+        if (data.playerInfo.map != data.nextScene) {
             // Salvar jogador no BD
             const ans = await postSpeedrun({
                 player: data.playerInfo.name,
@@ -82,31 +94,40 @@ export default class TextScene extends Phaser.Scene {
                 });
             }
             dados.sort((a, b) => a.time - b.time);
-
+          
+            dados = dados.filter((item, index, array) => {
+                return array.findIndex((element) => element.name === item.name) === index;
+            });
+          
             // Printar dados na tela
             let output = "";
             dados.forEach(item => {output += item.name + " - " + item.time.toFixed(2) + " segundos\n";});
             this.time.delayedCall(4000, () => {
                 this.textObject.setText("Placar dos melhores:\n" + output);
             });
-            this.time.delayedCall(9000, () => {
+            this.time.delayedCall(11000, () => {
                 this.textObject.setText(this.text);
             });
-            this.waitDelay = 12000;
+            this.waitDelay = 14000;
         }
         else {
             this.add.text(0, 100, this.text, textConfig);
             this.waitDelay = 0;
         }
 
-        this.time.delayedCall(this.waitDelay, () => {
-            setTimeout(() => {
-                this.cameras.main.fadeOut(2000);
-                this.cameras.main.once('camerafadeoutcomplete', () => {
-                    this.nextScene = data.nextScene;
-                    this.scene.start(this.nextScene, { playerInfo: data.playerInfo });
-                });
-            }, data.timeText);
-        });
+        if (data.nextScene == 'Frontrooms'){
+          autoReload();
+        }
+        else {
+          this.time.delayedCall(this.waitDelay, () => {
+              setTimeout(() => {
+                  this.cameras.main.fadeOut(2000);
+                  this.cameras.main.once('camerafadeoutcomplete', () => {
+                      this.nextScene = data.nextScene;
+                      this.scene.start(this.nextScene, { playerInfo: data.playerInfo });
+                  });
+              }, data.timeText);
+          });
+        }
     }
 }

@@ -39,9 +39,10 @@ export default class LastLevel extends Phaser.Scene {
     }
 
     create(data) {
-
         this.startTime = this.time.now / 1000;
         this.playerInfo = data.playerInfo;
+        this.playerInfo.map = 'LastLevel';
+        this.goodending = false;
 
         this.cameras.main.setBackgroundColor('#000000');
         this.cameras.main.fadeIn(2000);
@@ -137,7 +138,6 @@ export default class LastLevel extends Phaser.Scene {
         this.player.anims.play(this.player.idle, true);
         this.scream.play();
         this.themeSong.stop();
-        this.walkerSound.stop();
         this.cameras.main.fadeOut(2000);
         const randomDeathMessage = Phaser.Math.RND.pick(deathMessages);
 
@@ -164,13 +164,16 @@ export default class LastLevel extends Phaser.Scene {
         const byPassMap = () => {
             for (var i = 0; i < doorLocation.length; i++) {
                 if (Math.abs(playerLocation.x - doorLocation[i].x) <= 30 && Math.abs(playerLocation.y - doorLocation[i].y) <= 30) {
-
+                    if (this.goodending){
+                      return;
+                    }
+                    this.goodending = true;
                     // Atualizar jogador no banco de dados
                     let timePassed = (this.time.now / 1000) - this.startTime;
                     let playerInfo = this.playerInfo;
                     playerInfo.totalTime += timePassed;
                     playerInfo.lastTime = timePassed;
-                    playerInfo.map = 'last_level'
+                    playerInfo.map = 'LastLevel'
 
                     this.monster_speed = 20;
                     this.player_speed = 25;
